@@ -1,0 +1,36 @@
+# Gradle Version Catalog — single source of truth for dependency coordinates,
+# versions, and plugins. build.gradle references these via `libs.*` accessors.
+#
+# Spring Boot starter versions are managed by the Spring Boot BOM (via the
+# dependency-management plugin), so those libraries intentionally omit a version.
+# Only non-BOM dependencies (OpenPDF) and plugins carry an explicit version.
+
+[versions]
+spring-boot = "4.0.0"
+dependency-management = "1.1.7"
+openpdf = "2.0.3"
+
+[libraries]
+# --- Runtime / implementation (versions supplied by the Spring Boot BOM) ---
+spring-boot-h2console = { module = "org.springframework.boot:spring-boot-h2console" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+spring-boot-starter-liquibase = { module = "org.springframework.boot:spring-boot-starter-liquibase" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc" }
+h2 = { module = "com.h2database:h2" }
+
+# --- Non-BOM dependency (explicit version) ---
+openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
+
+# --- Test (versions supplied by the Spring Boot BOM) ---
+spring-boot-starter-actuator-test = { module = "org.springframework.boot:spring-boot-starter-actuator-test" }
+spring-boot-starter-data-jdbc-test = { module = "org.springframework.boot:spring-boot-starter-data-jdbc-test" }
+spring-boot-starter-liquibase-test = { module = "org.springframework.boot:spring-boot-starter-liquibase-test" }
+spring-boot-starter-validation-test = { module = "org.springframework.boot:spring-boot-starter-validation-test" }
+spring-boot-starter-webmvc-test = { module = "org.springframework.boot:spring-boot-starter-webmvc-test" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }

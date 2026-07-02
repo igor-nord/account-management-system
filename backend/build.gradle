@@ -1,0 +1,40 @@
+plugins {
+	id 'java'
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.dependency.management)
+}
+
+group = 'com.homework'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation libs.spring.boot.h2console
+	implementation libs.spring.boot.starter.actuator
+	implementation libs.spring.boot.starter.data.jdbc
+	implementation libs.spring.boot.starter.liquibase
+	implementation libs.spring.boot.starter.validation
+	implementation libs.spring.boot.starter.webmvc
+	// PDF report generation (non-BOM dependency — version from the catalog)
+	implementation libs.openpdf
+	runtimeOnly libs.h2
+	testImplementation libs.spring.boot.starter.actuator.test
+	testImplementation libs.spring.boot.starter.data.jdbc.test
+	testImplementation libs.spring.boot.starter.liquibase.test
+	testImplementation libs.spring.boot.starter.validation.test
+	testImplementation libs.spring.boot.starter.webmvc.test
+	testRuntimeOnly libs.junit.platform.launcher
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
