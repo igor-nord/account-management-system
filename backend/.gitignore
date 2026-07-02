@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### H2 database (runtime files created by the app) ###
+/data/
+*.mv.db
+*.trace.db
+*.lock.db

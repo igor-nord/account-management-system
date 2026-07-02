@@ -1,24 +1,19 @@
-# Java / Gradle
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-*.class
-*.log
-
-# H2 database files
-*.mv.db
-*.trace.db
-
-# Node / Angular
-node_modules/
-frontend/dist/
-frontend/.angular/
-
-# IDE
-.idea/
-*.iml
-out/
+# Root .gitignore — GLOBAL ignores only (OS + IDE).
+# Subproject build artifacts are owned by their own .gitignore files:
+#   backend/.gitignore   — Java/Gradle build output + H2 database files
+#   frontend/.gitignore  — Node/Angular build output + caches
+# Git applies all of them automatically for their respective subtrees.
 
 # OS
 .DS_Store
 Thumbs.db
+
+# IntelliJ IDEA (IDE project files — regenerated from Gradle/CLI, not committed)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Logs (cross-cutting)
+*.log
