@@ -38,3 +38,31 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// --- Optional: bundle the Angular SPA into the Spring Boot jar (single deployable) ---
+// Kept OFF the normal build path so dev builds stay fast. Enable explicitly with:
+//   ./gradlew.bat clean bootJar -PbundleFrontend
+def frontendDir = "$rootDir/../frontend"
+def frontendDist = "$frontendDir/dist/frontend/browser"
+def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+
+tasks.register('buildFrontend', Exec) {
+	group = 'build'
+	description = 'Installs deps and builds the Angular SPA for production.'
+	workingDir = frontendDir
+	commandLine isWindows ? ['cmd', '/c', 'npm ci && npm run build']
+						  : ['sh', '-c', 'npm ci && npm run build']
+}
+
+// When -PbundleFrontend is set, fold the built SPA into the main resources so
+// Spring Boot serves it from classpath:/static. Hooking into processResources
+// (itself a Copy task that owns build/resources/main) avoids overlapping-output
+// task-validation errors.
+if (project.hasProperty('bundleFrontend')) {
+	tasks.named('processResources') {
+		dependsOn 'buildFrontend'
+		from(frontendDist) {
+			into 'static'
+		}
+	}
+}
