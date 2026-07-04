@@ -6,9 +6,9 @@
 # Only non-BOM dependencies (OpenPDF) and plugins carry an explicit version.
 
 [versions]
-spring-boot = "4.0.0"
+spring-boot = "4.1.0"
 dependency-management = "1.1.7"
-openpdf = "2.0.3"
+openpdf = "3.0.5"
 
 [libraries]
 # --- Runtime / implementation (versions supplied by the Spring Boot BOM) ---

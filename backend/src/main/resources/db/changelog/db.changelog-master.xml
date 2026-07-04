@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+    <!-- DDL: schema structure, one file per table (sequence lives with its table) -->
+    <include file="db/changelog/changes/ddl/001-customer.xml"/>
+    <include file="db/changelog/changes/ddl/002-account.xml"/>
+    <include file="db/changelog/changes/ddl/003-account-transaction.xml"/>
+
+    <!-- DML: seed data (must follow the DDL that creates the tables) -->
+    <include file="db/changelog/changes/dml/001-customer.xml"/>
+    <include file="db/changelog/changes/dml/002-accounts.xml"/>
+
+</databaseChangeLog>

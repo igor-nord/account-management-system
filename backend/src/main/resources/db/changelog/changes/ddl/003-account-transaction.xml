@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
+
+    <changeSet id="ddl-003-account-transaction-table" author="igor">
+        <createTable tableName="account_transaction">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transaction_id" type="VARCHAR(13)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="counterparty_account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="account_transaction"
+                             columnNames="transaction_id, account_id, currency"
+                             constraintName="uq_txn_account_currency"/>
+
+        <createIndex tableName="account_transaction" indexName="idx_txn_account_created">
+            <column name="account_id"/>
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex tableName="account_transaction" indexName="idx_txn_transaction_id">
+            <column name="transaction_id"/>
+        </createIndex>
+
+        <sql>ALTER TABLE account_transaction ADD CONSTRAINT chk_txn_type CHECK (type IN ('CREDIT','DEBIT'))</sql>
+        <sql>ALTER TABLE account_transaction ADD CONSTRAINT chk_txn_amount CHECK (amount &gt; 0)</sql>
+        <sql>ALTER TABLE account_transaction ADD CONSTRAINT chk_txn_currency CHECK (currency IN ('EUR','USD','SEK','GBP','VND'))</sql>
+    </changeSet>
+
+</databaseChangeLog>
