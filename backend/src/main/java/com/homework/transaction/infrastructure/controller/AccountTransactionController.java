@@ -1,0 +1,28 @@
+package com.homework.transaction.infrastructure.controller;
+
+import com.homework.transaction.port.CreditAccountUseCase;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/account")
+class AccountTransactionController {
+
+    private final CreditAccountUseCase creditAccount;
+
+    AccountTransactionController(CreditAccountUseCase creditAccount) {
+        this.creditAccount = creditAccount;
+    }
+
+    @PostMapping("/credit")
+    TransactionResponse credit(@RequestHeader("X-Customer-Id") Long customerId,
+                               @RequestHeader("X-Account-Id") Long accountId,
+                               @Valid @RequestBody AmountRequest request) {
+        return TransactionResponse.of(
+                creditAccount.credit(customerId, accountId, request.amount(), request.description()));
+    }
+}
