@@ -1,4 +1,4 @@
-package com.homework.account.infrastructure;
+package com.homework.account.infrastructure.repository;
 
 import com.homework.account.domain.Account;
 import com.homework.account.domain.Currency;

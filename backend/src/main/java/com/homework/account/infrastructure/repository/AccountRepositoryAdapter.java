@@ -1,9 +1,9 @@
-package com.homework.account.infrastructure;
+package com.homework.account.infrastructure.repository;
 
 import com.homework.account.domain.Account;
-import com.homework.account.domain.AccountRepository;
 import com.homework.account.domain.Currency;
 import com.homework.account.domain.LedgerCode;
+import com.homework.account.port.AccountRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 

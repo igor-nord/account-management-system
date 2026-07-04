@@ -1,4 +1,4 @@
-package com.homework.account.application;
+package com.homework.account.usecase;
 
 import org.springframework.stereotype.Component;
 
