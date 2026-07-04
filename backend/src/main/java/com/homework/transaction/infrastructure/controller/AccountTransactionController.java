@@ -1,6 +1,7 @@
 package com.homework.transaction.infrastructure.controller;
 
 import com.homework.transaction.port.CreditAccountUseCase;
+import com.homework.transaction.port.DebitAccountUseCase;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 class AccountTransactionController {
 
     private final CreditAccountUseCase creditAccount;
+    private final DebitAccountUseCase debitAccount;
 
-    AccountTransactionController(CreditAccountUseCase creditAccount) {
+    AccountTransactionController(CreditAccountUseCase creditAccount, DebitAccountUseCase debitAccount) {
         this.creditAccount = creditAccount;
+        this.debitAccount = debitAccount;
     }
 
     @PostMapping("/credit")
@@ -24,5 +27,13 @@ class AccountTransactionController {
                                @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
                 creditAccount.credit(customerId, accountId, request.amount(), request.description()));
+    }
+
+    @PostMapping("/debit")
+    TransactionResponse debit(@RequestHeader("X-Customer-Id") Long customerId,
+                              @RequestHeader("X-Account-Id") Long accountId,
+                              @Valid @RequestBody AmountRequest request) {
+        return TransactionResponse.of(
+                debitAccount.debit(customerId, accountId, request.amount(), request.description()));
     }
 }
