@@ -52,6 +52,7 @@
 
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_type CHECK (account_type IN ('CUSTOMER','LEDGER'))</sql>
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_currency CHECK (currency IN ('EUR','USD','SEK','GBP','VND'))</sql>
+        <sql>ALTER TABLE account ADD CONSTRAINT chk_account_code CHECK (code IS NULL OR code IN ('FX_CLEARING','EXTERNAL'))</sql>
     </changeSet>
 
 </databaseChangeLog>
