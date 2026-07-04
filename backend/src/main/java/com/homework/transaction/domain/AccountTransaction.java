@@ -18,4 +18,11 @@ public record AccountTransaction(
         Currency currency,
         String description,
         Instant createdAt) {
+
+    public static AccountTransaction newLeg(String transactionId, Long accountId, Long counterpartyAccountId,
+                                            TransactionType type, BigDecimal amount, Currency currency,
+                                            String description) {
+        return new AccountTransaction(null, transactionId, accountId, counterpartyAccountId, type,
+                amount, currency, description, null);
+    }
 }

@@ -22,4 +22,8 @@ public record Account(
         return new Account(null, null, customerId, AccountType.CUSTOMER, null, currency,
                 BigDecimal.ZERO, null, null);
     }
+
+    public Account withBalance(BigDecimal newBalance) {
+        return new Account(id, accountId, customerId, accountType, code, currency, newBalance, createdAt, updatedAt);
+    }
 }
