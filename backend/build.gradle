@@ -27,6 +27,7 @@ dependencies {
 	// PDF report generation (non-BOM dependency — version from the catalog)
 	implementation libs.openpdf
 	implementation libs.tsid
+	implementation libs.springdoc
 	runtimeOnly libs.h2
 	testImplementation libs.spring.boot.starter.actuator.test
 	testImplementation libs.spring.boot.starter.data.jdbc.test
