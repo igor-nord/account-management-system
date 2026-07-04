@@ -9,6 +9,7 @@
 spring-boot = "4.1.0"
 dependency-management = "1.1.7"
 openpdf = "3.0.5"
+tsid = "5.2.6"
 
 [libraries]
 # --- Runtime / implementation (versions supplied by the Spring Boot BOM) ---
@@ -20,8 +21,9 @@ spring-boot-starter-validation = { module = "org.springframework.boot:spring-boo
 spring-boot-starter-webmvc = { module = "org.springframework.boot:spring-boot-starter-webmvc" }
 h2 = { module = "com.h2database:h2" }
 
-# --- Non-BOM dependency (explicit version) ---
+# --- Non-BOM dependencies (explicit version) ---
 openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
+tsid = { module = "com.github.f4b6a3:tsid-creator", version.ref = "tsid" }
 
 # --- Test (versions supplied by the Spring Boot BOM) ---
 spring-boot-starter-actuator-test = { module = "org.springframework.boot:spring-boot-starter-actuator-test" }
