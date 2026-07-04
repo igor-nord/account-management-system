@@ -7,11 +7,11 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-@EnableConfigurationProperties(HttpStatProperties.class)
+@EnableConfigurationProperties(ExternalLoggingProperties.class)
 public class RestClientConfig {
 
     @Bean
-    public RestClient httpStatRestClient(HttpStatProperties properties) {
+    public RestClient externalLoggingRestClient(ExternalLoggingProperties properties) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(properties.connectTimeout());
         factory.setReadTimeout(properties.readTimeout());

@@ -8,25 +8,29 @@ import org.springframework.web.client.RestClient;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-class HttpStatLoggingAdapterTest {
+class HttpExternalLoggingAdapterTest {
 
-    private final HttpStatProperties properties =
-            new HttpStatProperties("https://httpstat.us", 200, Duration.ofSeconds(2), Duration.ofSeconds(3));
+    private final ExternalLoggingProperties properties =
+            new ExternalLoggingProperties("https://httpbin.org", 200, Duration.ofSeconds(2), Duration.ofSeconds(3));
 
     @Test
-    void succeedsOnTwoHundred() {
+    void putsWithIdempotencyKeyAndSucceedsOnTwoHundred() {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
-        server.expect(requestTo("https://httpstat.us/200")).andExpect(method(GET)).andRespond(withSuccess());
+        server.expect(requestTo("https://httpbin.org/status/200"))
+                .andExpect(method(PUT))
+                .andExpect(header("Idempotency-Key", "TXN0000000001"))
+                .andRespond(withSuccess());
 
-        HttpStatLoggingAdapter adapter = new HttpStatLoggingAdapter(builder.build(), properties);
-        adapter.logBeforeDebit();
+        HttpExternalLoggingAdapter adapter = new HttpExternalLoggingAdapter(builder.build(), properties);
+        adapter.logBeforeDebit("TXN0000000001");
 
         server.verify();
     }
@@ -35,9 +39,9 @@ class HttpStatLoggingAdapterTest {
     void throwsOnServerError() {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
-        server.expect(requestTo("https://httpstat.us/200")).andRespond(withServerError());
+        server.expect(requestTo("https://httpbin.org/status/200")).andRespond(withServerError());
 
-        HttpStatLoggingAdapter adapter = new HttpStatLoggingAdapter(builder.build(), properties);
-        assertThrows(ExternalLoggingException.class, adapter::logBeforeDebit);
+        HttpExternalLoggingAdapter adapter = new HttpExternalLoggingAdapter(builder.build(), properties);
+        assertThrows(ExternalLoggingException.class, () -> adapter.logBeforeDebit("TXN0000000002"));
     }
 }
