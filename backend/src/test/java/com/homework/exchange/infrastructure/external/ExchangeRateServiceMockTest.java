@@ -27,9 +27,9 @@ class ExchangeRateServiceMockTest {
     }
 
     @Test
-    void convertsWithFourDecimalScale() {
+    void convertsWithTwoDecimalScale() {
         BigDecimal result = service.convert(new BigDecimal("100"), Currency.EUR, Currency.USD);
-        assertEquals(new BigDecimal("108.0000"), result);
+        assertEquals(new BigDecimal("108.00"), result);
     }
 
     @Test

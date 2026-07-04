@@ -19,7 +19,7 @@ public class ExchangeRateServiceMock implements ExchangeRateService {
             Currency.VND, new BigDecimal("27000.00"));
 
     private static final int RATE_SCALE = 6;
-    private static final int MONEY_SCALE = 4;
+    private static final int MONEY_SCALE = 2;
 
     @Override
     public BigDecimal rate(Currency from, Currency to) {

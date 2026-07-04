@@ -35,7 +35,7 @@
             <column name="currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
-            <column name="balance" type="DECIMAL(19,4)" defaultValueNumeric="0">
+            <column name="balance" type="DECIMAL(19,2)" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="TIMESTAMP">

@@ -30,18 +30,18 @@ class TransactionRepositoryAdapterTest {
     @Test
     void savesLegAndAssignsIdAndTimestamp() {
         AccountTransaction saved = adapter.save(
-                leg("TXN0000000001", 1000012L, 1000002L, TransactionType.DEBIT, "100.0000", Currency.USD));
+                leg("TXN0000000001", 1000012L, 1000002L, TransactionType.DEBIT, "100.00", Currency.USD));
 
         assertNotNull(saved.id());
         assertNotNull(saved.createdAt());
-        assertEquals(new BigDecimal("100.0000"), saved.amount());
+        assertEquals(new BigDecimal("100.00"), saved.amount());
     }
 
     @Test
     void savesAllLegsAndFindsByAccount() {
         List<AccountTransaction> legs = List.of(
-                leg("TXN0000000002", 1000012L, 1000002L, TransactionType.DEBIT, "100.0000", Currency.USD),
-                leg("TXN0000000002", 1000002L, 1000012L, TransactionType.CREDIT, "100.0000", Currency.USD));
+                leg("TXN0000000002", 1000012L, 1000002L, TransactionType.DEBIT, "100.00", Currency.USD),
+                leg("TXN0000000002", 1000002L, 1000012L, TransactionType.CREDIT, "100.00", Currency.USD));
 
         adapter.saveAll(legs);
 
