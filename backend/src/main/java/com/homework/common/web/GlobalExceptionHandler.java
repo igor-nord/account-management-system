@@ -2,6 +2,7 @@ package com.homework.common.web;
 
 import com.homework.account.usecase.AccountNotFoundException;
 import com.homework.customer.usecase.CustomerNotFoundException;
+import com.homework.history.infrastructure.controller.InvalidCursorException;
 import com.homework.transaction.port.ExternalLoggingException;
 import com.homework.transaction.usecase.InsufficientFundsException;
 import com.homework.transaction.usecase.NonEuroDebitException;
@@ -53,6 +54,11 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(SameAccountExchangeException.class)
     ProblemDetail handleSameAccount(SameAccountExchangeException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCursorException.class)
+    ProblemDetail handleInvalidCursor(InvalidCursorException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

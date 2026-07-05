@@ -28,7 +28,7 @@ class HistoryController {
                                      @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) String cursor) {
         int capped = Math.clamp(limit, 1, 100);
-        HistoryCursor decoded = cursor == null ? null : CursorCodec.decode(cursor);
+        HistoryCursor decoded = (cursor == null || cursor.isBlank()) ? null : CursorCodec.decode(cursor);
         return HistoryPageResponse.of(history.history(username, accountId, capped, decoded));
     }
 

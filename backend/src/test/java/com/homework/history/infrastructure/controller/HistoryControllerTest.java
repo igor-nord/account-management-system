@@ -74,4 +74,22 @@ class HistoryControllerTest {
                         .header("X-Username", "demo").header("X-Account-Id", "1000001"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void blankCursorIsTreatedAsFirstPage() throws Exception {
+        credit("10.00");
+
+        mockMvc().perform(get("/api/account/transactions")
+                        .header("X-Username", "demo").header("X-Account-Id", "1000011").param("cursor", ""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items.length()").value(1));
+    }
+
+    @Test
+    void malformedCursorReturns400() throws Exception {
+        mockMvc().perform(get("/api/account/transactions")
+                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .param("cursor", "not-base64!!"))
+                .andExpect(status().isBadRequest());
+    }
 }
