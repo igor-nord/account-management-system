@@ -18,5 +18,10 @@ export const OverviewActions = createActionGroup({
     'Load Balance Series': props<{ accountId: number }>(),
     'Load Balance Series Success': props<{ points: BalanceSnapshot[] }>(),
     'Load Balance Series Failure': props<{ error: string }>(),
+    'Credit': props<{ accountId: number; amount: string; description: string }>(),
+    'Debit': props<{ accountId: number; amount: string; description: string }>(),
+    'Exchange': props<{ sourceAccountId: number; targetAccountId: number; amount: string }>(),
+    'Action Succeeded': props<{ accountId: number }>(),
+    'Action Failed': props<{ error: string }>(),
   },
 });

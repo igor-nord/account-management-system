@@ -10,6 +10,7 @@ export interface OverviewState {
   historyLoading: boolean;
   series: BalanceSnapshot[];
   error: string | null;
+  actionError: string | null;
 }
 
 const initialState: OverviewState = {
@@ -19,6 +20,7 @@ const initialState: OverviewState = {
   historyLoading: false,
   series: [],
   error: null,
+  actionError: null,
 };
 
 export const overviewFeature = createFeature({
@@ -52,6 +54,11 @@ export const overviewFeature = createFeature({
     on(OverviewActions.loadHistoryFailure, (state, { error }) => ({ ...state, error, historyLoading: false })),
     on(OverviewActions.loadMoreHistoryFailure, (state, { error }) => ({ ...state, error, historyLoading: false })),
     on(OverviewActions.loadBalanceSeriesFailure, (state, { error }) => ({ ...state, error })),
+    on(OverviewActions.credit, OverviewActions.debit, OverviewActions.exchange, (state) => ({
+      ...state,
+      actionError: null,
+    })),
+    on(OverviewActions.actionFailed, (state, { error }) => ({ ...state, actionError: error })),
   ),
 });
 
@@ -62,4 +69,5 @@ export const {
   selectHistoryLoading,
   selectSeries,
   selectError,
+  selectActionError,
 } = overviewFeature;

@@ -23,4 +23,25 @@ export class OverviewApi {
       headers: { 'X-Account-Id': String(accountId) },
     });
   }
+
+  credit(accountId: number, amount: string, description: string): Observable<unknown> {
+    return this.http.post('/api/account/credit', { amount, description }, {
+      headers: { 'X-Account-Id': String(accountId) },
+    });
+  }
+
+  debit(accountId: number, amount: string, description: string): Observable<unknown> {
+    return this.http.post('/api/account/debit', { amount, description }, {
+      headers: { 'X-Account-Id': String(accountId) },
+    });
+  }
+
+  exchange(sourceAccountId: number, targetAccountId: number, amount: string): Observable<unknown> {
+    return this.http.post('/api/exchange', { amount }, {
+      headers: {
+        'X-Source-Account-Id': String(sourceAccountId),
+        'X-Target-Account-Id': String(targetAccountId),
+      },
+    });
+  }
 }

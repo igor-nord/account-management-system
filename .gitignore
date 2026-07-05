@@ -17,3 +17,6 @@ out/
 
 # Logs (cross-cutting)
 *.log
+
+# H2
+*.db

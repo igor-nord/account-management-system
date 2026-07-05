@@ -1,13 +1,16 @@
-import { Component, ElementRef, OnDestroy, afterNextRender, effect, inject, input, viewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, afterNextRender, computed, effect, inject, input, viewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { AccountsActions } from '../accounts/accounts.actions';
+import { accountsFeature } from '../accounts/accounts.feature';
 import { BalanceChart } from './balance-chart';
 import { OverviewActions } from './overview.actions';
 import { overviewFeature } from './overview.feature';
 
 @Component({
   selector: 'app-account-overview',
-  imports: [RouterLink, BalanceChart],
+  imports: [RouterLink, FormsModule, BalanceChart],
   template: `
     <main>
       <a routerLink="/">← All accounts</a>
@@ -16,6 +19,36 @@ import { overviewFeature } from './overview.feature';
         <h1>Account {{ acc.accountId }}</h1>
         <p>Balance: {{ acc.balance }} {{ acc.currency }}</p>
       }
+
+      <section class="actions">
+        <h2>Actions</h2>
+        @if (actionError()) {
+          <p class="error">{{ actionError() }}</p>
+        }
+        <form (ngSubmit)="credit()">
+          <strong>Credit</strong>
+          <input name="creditAmount" [(ngModel)]="creditAmount" placeholder="amount" />
+          <input name="creditDescription" [(ngModel)]="creditDescription" placeholder="description" />
+          <button type="submit">Add funds</button>
+        </form>
+        <form (ngSubmit)="debit()">
+          <strong>Debit</strong>
+          <input name="debitAmount" [(ngModel)]="debitAmount" placeholder="amount" />
+          <input name="debitDescription" [(ngModel)]="debitDescription" placeholder="description" />
+          <button type="submit">Withdraw</button>
+        </form>
+        <form (ngSubmit)="exchange()">
+          <strong>Exchange to</strong>
+          <select name="exchangeTarget" [(ngModel)]="exchangeTargetId">
+            <option [ngValue]="null" disabled>select account</option>
+            @for (a of otherAccounts(); track a.accountId) {
+              <option [ngValue]="a.accountId">{{ a.accountId }} ({{ a.currency }})</option>
+            }
+          </select>
+          <input name="exchangeAmount" [(ngModel)]="exchangeAmount" placeholder="amount (source currency)" />
+          <button type="submit">Exchange</button>
+        </form>
+      </section>
 
       <h2>Balance history</h2>
       <app-balance-chart [series]="series()" />
@@ -56,6 +89,18 @@ export class AccountOverview implements OnDestroy {
   readonly historyLoading = this.store.selectSignal(overviewFeature.selectHistoryLoading);
   readonly series = this.store.selectSignal(overviewFeature.selectSeries);
   readonly error = this.store.selectSignal(overviewFeature.selectError);
+  readonly actionError = this.store.selectSignal(overviewFeature.selectActionError);
+  private readonly accounts = this.store.selectSignal(accountsFeature.selectAccounts);
+  readonly otherAccounts = computed(() =>
+    this.accounts().filter((a) => a.accountId !== this.accountId()),
+  );
+
+  creditAmount = '';
+  creditDescription = '';
+  debitAmount = '';
+  debitDescription = '';
+  exchangeTargetId: number | null = null;
+  exchangeAmount = '';
 
   constructor() {
     effect(() => {
@@ -64,6 +109,7 @@ export class AccountOverview implements OnDestroy {
       this.store.dispatch(OverviewActions.loadAccount({ accountId }));
       this.store.dispatch(OverviewActions.loadHistory({ accountId }));
       this.store.dispatch(OverviewActions.loadBalanceSeries({ accountId }));
+      this.store.dispatch(AccountsActions.loadAccounts());
     });
 
     afterNextRender(() => {
@@ -82,5 +128,50 @@ export class AccountOverview implements OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+  }
+
+  credit(): void {
+    if (!this.creditAmount) {
+      return;
+    }
+    this.store.dispatch(
+      OverviewActions.credit({
+        accountId: this.accountId(),
+        amount: this.creditAmount,
+        description: this.creditDescription,
+      }),
+    );
+    this.creditAmount = '';
+    this.creditDescription = '';
+  }
+
+  debit(): void {
+    if (!this.debitAmount) {
+      return;
+    }
+    this.store.dispatch(
+      OverviewActions.debit({
+        accountId: this.accountId(),
+        amount: this.debitAmount,
+        description: this.debitDescription,
+      }),
+    );
+    this.debitAmount = '';
+    this.debitDescription = '';
+  }
+
+  exchange(): void {
+    if (!this.exchangeAmount || this.exchangeTargetId === null) {
+      return;
+    }
+    this.store.dispatch(
+      OverviewActions.exchange({
+        sourceAccountId: this.accountId(),
+        targetAccountId: this.exchangeTargetId,
+        amount: this.exchangeAmount,
+      }),
+    );
+    this.exchangeAmount = '';
+    this.exchangeTargetId = null;
   }
 }

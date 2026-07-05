@@ -10,6 +10,7 @@ const initial: OverviewState = {
   historyLoading: false,
   series: [],
   error: null,
+  actionError: null,
 };
 
 const item = (id: string): TransactionSummary => ({
@@ -46,5 +47,19 @@ describe('overviewFeature reducer', () => {
     const seeded: OverviewState = { ...initial, items: [item('a')] };
     const state = overviewFeature.reducer(seeded, OverviewActions.reset());
     expect(state.items).toEqual([]);
+  });
+
+  it('records an action error on actionFailed and clears it on the next action', () => {
+    const failed = overviewFeature.reducer(
+      initial,
+      OverviewActions.actionFailed({ error: 'Insufficient funds' }),
+    );
+    expect(failed.actionError).toBe('Insufficient funds');
+
+    const retried = overviewFeature.reducer(
+      failed,
+      OverviewActions.credit({ accountId: 1000011, amount: '5.00', description: '' }),
+    );
+    expect(retried.actionError).toBeNull();
   });
 });
