@@ -18,15 +18,15 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 class HttpExternalLoggingAdapterTest {
 
     private final ExternalLoggingProperties properties =
-            new ExternalLoggingProperties("https://httpbin.org", 200, Duration.ofSeconds(2), Duration.ofSeconds(3));
+            new ExternalLoggingProperties("https://httpbun.com", 200, Duration.ofSeconds(2), Duration.ofSeconds(3));
 
     @Test
-    void putsWithIdempotencyKeyAndSucceedsOnTwoHundred() {
+    void putsWithTransactionIdHeaderAndSucceedsOnTwoHundred() {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
-        server.expect(requestTo("https://httpbin.org/status/200"))
+        server.expect(requestTo("https://httpbun.com/status/200"))
                 .andExpect(method(PUT))
-                .andExpect(header("Idempotency-Key", "TXN0000000001"))
+                .andExpect(header("transaction-id", "TXN0000000001"))
                 .andRespond(withSuccess());
 
         HttpExternalLoggingAdapter adapter = new HttpExternalLoggingAdapter(builder.build(), properties);
@@ -39,7 +39,7 @@ class HttpExternalLoggingAdapterTest {
     void throwsOnServerError() {
         RestClient.Builder builder = RestClient.builder();
         MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
-        server.expect(requestTo("https://httpbin.org/status/200")).andRespond(withServerError());
+        server.expect(requestTo("https://httpbun.com/status/200")).andRespond(withServerError());
 
         HttpExternalLoggingAdapter adapter = new HttpExternalLoggingAdapter(builder.build(), properties);
         assertThrows(ExternalLoggingException.class, () -> adapter.logBeforeDebit("TXN0000000002"));

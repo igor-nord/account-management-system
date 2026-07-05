@@ -23,7 +23,7 @@ public class HttpExternalLoggingAdapter implements ExternalLoggingPort {
         try {
             restClient.put()
                     .uri(url)
-                    .header("Idempotency-Key", transactionId)
+                    .header("transaction-id", transactionId)
                     .retrieve()
                     .toBodilessEntity();
         } catch (RestClientException e) {
