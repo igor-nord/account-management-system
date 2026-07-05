@@ -6,12 +6,12 @@ import com.homework.account.domain.Currency;
 
 import java.math.BigDecimal;
 
-public record AccountResponse(
+public record AccountSummary(
         Long accountId,
         Currency currency,
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal balance) {
 
-    public static AccountResponse of(Account account) {
-        return new AccountResponse(account.accountId(), account.currency(), account.balance());
+    public static AccountSummary of(Account account) {
+        return new AccountSummary(account.accountId(), account.currency(), account.balance());
     }
 }

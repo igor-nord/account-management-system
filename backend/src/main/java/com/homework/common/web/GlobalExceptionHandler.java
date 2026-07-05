@@ -26,7 +26,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(InsufficientFundsException.class)
     ProblemDetail handleInsufficientFunds(InsufficientFundsException e) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
     }
 
     @ExceptionHandler(AccountNotFoundException.class)

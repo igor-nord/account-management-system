@@ -7,7 +7,7 @@ import com.homework.transaction.domain.TransactionType;
 
 import java.math.BigDecimal;
 
-public record LegView(
+public record TransactionLeg(
         Long accountId,
         Long counterpartyAccountId,
         TransactionType type,
@@ -15,8 +15,8 @@ public record LegView(
         Currency currency,
         String description) {
 
-    public static LegView of(AccountTransaction leg) {
-        return new LegView(leg.accountId(), leg.counterpartyAccountId(), leg.type(),
+    public static TransactionLeg of(AccountTransaction leg) {
+        return new TransactionLeg(leg.accountId(), leg.counterpartyAccountId(), leg.type(),
                 leg.amount(), leg.currency(), leg.description());
     }
 }

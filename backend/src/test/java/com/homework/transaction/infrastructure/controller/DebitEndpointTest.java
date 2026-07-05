@@ -60,7 +60,7 @@ class DebitEndpointTest {
         mockMvc().perform(post("/api/account/debit")
                         .header("X-Customer-Id", "1").header("X-Account-Id", "1000013")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"5.00\"}"))
-                .andExpect(status().isUnprocessableEntity());
+                .andExpect(status().isUnprocessableContent());
     }
 
     @Test

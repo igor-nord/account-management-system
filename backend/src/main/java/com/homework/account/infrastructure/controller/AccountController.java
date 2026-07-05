@@ -19,13 +19,13 @@ class AccountController {
     }
 
     @GetMapping("/accounts")
-    List<AccountResponse> list(@RequestHeader("X-Customer-Id") Long customerId) {
-        return accountAccess.ownedAccounts(customerId).stream().map(AccountResponse::of).toList();
+    List<AccountSummary> list(@RequestHeader("X-Customer-Id") Long customerId) {
+        return accountAccess.ownedAccounts(customerId).stream().map(AccountSummary::of).toList();
     }
 
     @GetMapping("/account")
-    AccountResponse get(@RequestHeader("X-Customer-Id") Long customerId,
-                        @RequestHeader("X-Account-Id") Long accountId) {
-        return AccountResponse.of(accountAccess.requireOwned(customerId, accountId));
+    AccountSummary get(@RequestHeader("X-Customer-Id") Long customerId,
+                       @RequestHeader("X-Account-Id") Long accountId) {
+        return AccountSummary.of(accountAccess.requireOwned(customerId, accountId));
     }
 }
