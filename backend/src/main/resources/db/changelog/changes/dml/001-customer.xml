@@ -26,4 +26,17 @@
         </insert>
     </changeSet>
 
+    <changeSet id="dml-001-customer-seed-demo-history" author="igor">
+        <insert tableName="customer">
+            <column name="id" valueNumeric="4"/>
+            <column name="username" value="johndoe"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="customer">
+            <column name="id" valueNumeric="5"/>
+            <column name="username" value="janedoe"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

@@ -175,4 +175,64 @@
         </insert>
     </changeSet>
 
+    <changeSet id="dml-002-account-seed-demo-history" author="igor">
+        <!-- johndoe customer accounts (customer_id = 4) -->
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000041"/>
+            <column name="customer_id" valueNumeric="4"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="EUR"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000042"/>
+            <column name="customer_id" valueNumeric="4"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="USD"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000043"/>
+            <column name="customer_id" valueNumeric="4"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="GBP"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <!-- janedoe customer accounts (customer_id = 5) -->
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000051"/>
+            <column name="customer_id" valueNumeric="5"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="EUR"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000052"/>
+            <column name="customer_id" valueNumeric="5"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="GBP"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000053"/>
+            <column name="customer_id" valueNumeric="5"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="SEK"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
