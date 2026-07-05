@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { HttpRequest, HttpHandlerFn, HttpHeaders } from '@angular/common/http';
 import { Injector, runInInjectionContext } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
@@ -33,5 +33,22 @@ describe('usernameInterceptor', () => {
 
   it('leaves non-api requests untouched', () => {
     expect(capture('/assets/logo.png', 'demo').headers.get('X-Username')).toBeNull();
+  });
+
+  it('does not override an explicit X-Username header (e.g. the lookup request)', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [{ provide: CurrentCustomer, useValue: { username: () => 'stale' } }],
+    });
+    let captured!: HttpRequest<unknown>;
+    const next: HttpHandlerFn = (req) => {
+      captured = req;
+      return of();
+    };
+    const request = new HttpRequest('GET', '/api/customer', {
+      headers: new HttpHeaders({ 'X-Username': 'typed' }),
+    });
+    runInInjectionContext(TestBed.inject(Injector), () => usernameInterceptor(request, next).subscribe());
+    expect(captured.headers.get('X-Username')).toBe('typed');
   });
 });
