@@ -132,4 +132,47 @@
 
     </changeSet>
 
+    <changeSet id="dml-002-account-seed-more" author="igor">
+        <!-- alice customer accounts (customer_id = 2) -->
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000021"/>
+            <column name="customer_id" valueNumeric="2"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="EUR"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000022"/>
+            <column name="customer_id" valueNumeric="2"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="GBP"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <!-- bob customer accounts (customer_id = 3) -->
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000031"/>
+            <column name="customer_id" valueNumeric="3"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="EUR"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="account">
+            <column name="account_id" valueNumeric="1000032"/>
+            <column name="customer_id" valueNumeric="3"/>
+            <column name="account_type" value="CUSTOMER"/>
+            <column name="currency" value="VND"/>
+            <column name="balance" valueNumeric="0"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

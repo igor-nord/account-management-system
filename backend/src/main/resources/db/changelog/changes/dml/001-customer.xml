@@ -13,4 +13,17 @@
         </insert>
     </changeSet>
 
+    <changeSet id="dml-001-customer-seed-more" author="igor">
+        <insert tableName="customer">
+            <column name="id" valueNumeric="2"/>
+            <column name="username" value="alice"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="customer">
+            <column name="id" valueNumeric="3"/>
+            <column name="username" value="bob"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
