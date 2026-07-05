@@ -6,7 +6,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { routes } from './app.routes';
-import { customerIdInterceptor } from './core/customer-id.interceptor';
+import { usernameInterceptor } from './core/username.interceptor';
 import { accountsFeature } from './accounts/accounts.feature';
 import { loadAccounts$ } from './accounts/accounts.effects';
 import { overviewFeature } from './account-overview/overview.feature';
@@ -22,17 +22,21 @@ import {
 } from './account-overview/overview.effects';
 import { transactionFeature } from './transaction/transaction.feature';
 import { loadTransaction$ } from './transaction/transaction.effects';
+import { customerFeature } from './customer/customer.feature';
+import { loadAccountsAfterLookup$, lookup$ } from './customer/customer.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([customerIdInterceptor])),
+    provideHttpClient(withInterceptors([usernameInterceptor])),
     provideStore(),
     provideState(accountsFeature),
     provideState(overviewFeature),
     provideState(transactionFeature),
+    provideState(customerFeature),
     provideEffects({ loadAccounts$ }),
+    provideEffects({ lookup$, loadAccountsAfterLookup$ }),
     provideEffects({
       loadAccount$,
       loadHistory$,

@@ -35,22 +35,22 @@ public class DebitAccountService implements DebitAccountUseCase {
     @Override
     @Transactional
     public List<AccountTransaction> debit(String username, Long accountId, BigDecimal amount, String description) {
-        Account customer = accountAccess.requireOwned(username, accountId);
-        if (customer.currency() != Currency.EUR) {
-            throw new NonEuroDebitException(customer.accountId(), customer.currency());
+        Account customerAccount = accountAccess.requireOwned(username, accountId);
+        if (customerAccount.currency() != Currency.EUR) {
+            throw new NonEuroDebitException(customerAccount.accountId(), customerAccount.currency());
         }
-        if (customer.balance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException(customer.accountId());
+        if (customerAccount.balance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException(customerAccount.accountId());
         }
-        Account external = accountAccess.ledgerAccount(LedgerCode.EXTERNAL, customer.currency());
+        Account external = accountAccess.ledgerAccount(LedgerCode.EXTERNAL, customerAccount.currency());
         String text = description == null || description.isBlank() ? "Withdrawal" : description;
         String txnId = ids.newTransactionId();
         externalLogging.logBeforeDebit(txnId);
         List<AccountTransaction> legs = List.of(
-                AccountTransaction.newLeg(txnId, customer.accountId(), external.accountId(),
-                        TransactionType.DEBIT, amount, customer.currency(), text),
-                AccountTransaction.newLeg(txnId, external.accountId(), customer.accountId(),
-                        TransactionType.CREDIT, amount, customer.currency(), text));
-        return LedgerWriter.visibleLegs(ledger.post(legs), Set.of(customer.accountId()));
+                AccountTransaction.newLeg(txnId, customerAccount.accountId(), external.accountId(),
+                        TransactionType.DEBIT, amount, customerAccount.currency(), text),
+                AccountTransaction.newLeg(txnId, external.accountId(), customerAccount.accountId(),
+                        TransactionType.CREDIT, amount, customerAccount.currency(), text));
+        return LedgerWriter.visibleLegs(ledger.post(legs), Set.of(customerAccount.accountId()));
     }
 }

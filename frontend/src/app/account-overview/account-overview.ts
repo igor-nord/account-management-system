@@ -31,12 +31,14 @@ import { overviewFeature } from './overview.feature';
           <input name="creditDescription" [(ngModel)]="creditDescription" placeholder="description" />
           <button type="submit">Add funds</button>
         </form>
-        <form (ngSubmit)="debit()">
-          <strong>Debit</strong>
-          <input name="debitAmount" [(ngModel)]="debitAmount" placeholder="amount" />
-          <input name="debitDescription" [(ngModel)]="debitDescription" placeholder="description" />
-          <button type="submit">Withdraw</button>
-        </form>
+        @if (account()?.currency === 'EUR') {
+          <form (ngSubmit)="debit()">
+            <strong>Debit</strong>
+            <input name="debitAmount" [(ngModel)]="debitAmount" placeholder="amount" />
+            <input name="debitDescription" [(ngModel)]="debitDescription" placeholder="description" />
+            <button type="submit">Withdraw</button>
+          </form>
+        }
         <form (ngSubmit)="exchange()">
           <strong>Exchange to</strong>
           <select name="exchangeTarget" [(ngModel)]="exchangeTargetId">
