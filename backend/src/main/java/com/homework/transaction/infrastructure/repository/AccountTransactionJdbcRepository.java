@@ -8,4 +8,6 @@ import java.util.List;
 interface AccountTransactionJdbcRepository extends CrudRepository<AccountTransaction, Long> {
 
     List<AccountTransaction> findByAccountIdOrderByCreatedAtAscIdAsc(Long accountId);
+
+    List<AccountTransaction> findByTransactionIdOrderByIdAsc(String transactionId);
 }

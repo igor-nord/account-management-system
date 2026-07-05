@@ -11,4 +11,6 @@ public interface TransactionRepository {
     List<AccountTransaction> saveAll(List<AccountTransaction> legs);
 
     List<AccountTransaction> findByAccountId(Long accountId);
+
+    List<AccountTransaction> findByTransactionId(String transactionId);
 }

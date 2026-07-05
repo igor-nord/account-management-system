@@ -36,6 +36,11 @@ public class TransactionRepositoryAdapter implements TransactionRepository {
         return jdbc.findByAccountIdOrderByCreatedAtAscIdAsc(accountId);
     }
 
+    @Override
+    public List<AccountTransaction> findByTransactionId(String transactionId) {
+        return jdbc.findByTransactionIdOrderByIdAsc(transactionId);
+    }
+
     private static AccountTransaction withCreatedAt(AccountTransaction transaction, Instant fallback) {
         if (transaction.createdAt() != null) {
             return transaction;
