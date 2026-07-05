@@ -16,6 +16,8 @@ import {
   loadHistory$,
   loadMoreHistory$,
 } from './account-overview/overview.effects';
+import { transactionFeature } from './transaction/transaction.feature';
+import { loadTransaction$ } from './transaction/transaction.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,8 +27,10 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideState(accountsFeature),
     provideState(overviewFeature),
+    provideState(transactionFeature),
     provideEffects({ loadAccounts$ }),
     provideEffects({ loadAccount$, loadHistory$, loadMoreHistory$, loadBalanceSeries$ }),
+    provideEffects({ loadTransaction$ }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };
