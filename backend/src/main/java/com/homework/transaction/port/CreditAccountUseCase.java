@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CreditAccountUseCase {
 
-    List<AccountTransaction> credit(Long customerId, Long accountId, BigDecimal amount, String description);
+    List<AccountTransaction> credit(String username, Long accountId, BigDecimal amount, String description);
 }

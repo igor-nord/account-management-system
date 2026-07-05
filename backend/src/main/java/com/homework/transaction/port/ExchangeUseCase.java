@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ExchangeUseCase {
 
-    List<AccountTransaction> exchange(Long customerId, Long sourceAccountId, Long targetAccountId, BigDecimal amount);
+    List<AccountTransaction> exchange(String username, Long sourceAccountId, Long targetAccountId, BigDecimal amount);
 }

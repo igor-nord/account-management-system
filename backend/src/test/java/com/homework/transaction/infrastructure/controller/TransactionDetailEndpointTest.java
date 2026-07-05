@@ -29,13 +29,13 @@ class TransactionDetailEndpointTest {
     @Test
     void returnsTransactionByIdForOwnedAccount() throws Exception {
         String body = mockMvc().perform(post("/api/account/credit")
-                        .header("X-Customer-Id", "1").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"12.00\"}"))
                 .andReturn().getResponse().getContentAsString();
         String transactionId = JsonPath.read(body, "$.transactionId");
 
         mockMvc().perform(get("/api/transaction")
-                        .header("X-Customer-Id", "1").header("X-Transaction-Id", transactionId))
+                        .header("X-Username", "demo").header("X-Transaction-Id", transactionId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.transactionId").value(transactionId))
                 .andExpect(jsonPath("$.legs[0].amount").value("12.00"));
@@ -44,7 +44,7 @@ class TransactionDetailEndpointTest {
     @Test
     void unknownTransactionReturns404() throws Exception {
         mockMvc().perform(get("/api/transaction")
-                        .header("X-Customer-Id", "1").header("X-Transaction-Id", "DOESNOTEXIST0"))
+                        .header("X-Username", "demo").header("X-Transaction-Id", "DOESNOTEXIST0"))
                 .andExpect(status().isNotFound());
     }
 }

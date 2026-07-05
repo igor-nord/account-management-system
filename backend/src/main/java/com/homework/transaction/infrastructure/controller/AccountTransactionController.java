@@ -1,5 +1,6 @@
 package com.homework.transaction.infrastructure.controller;
 
+import com.homework.common.web.CurrentUsername;
 import com.homework.transaction.port.CreditAccountUseCase;
 import com.homework.transaction.port.DebitAccountUseCase;
 import jakarta.validation.Valid;
@@ -22,18 +23,18 @@ class AccountTransactionController {
     }
 
     @PostMapping("/credit")
-    TransactionResponse credit(@RequestHeader("X-Customer-Id") Long customerId,
+    TransactionResponse credit(@CurrentUsername String username,
                                @RequestHeader("X-Account-Id") Long accountId,
                                @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                creditAccount.credit(customerId, accountId, request.amount(), request.description()));
+                creditAccount.credit(username, accountId, request.amount(), request.description()));
     }
 
     @PostMapping("/debit")
-    TransactionResponse debit(@RequestHeader("X-Customer-Id") Long customerId,
+    TransactionResponse debit(@CurrentUsername String username,
                               @RequestHeader("X-Account-Id") Long accountId,
                               @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                debitAccount.debit(customerId, accountId, request.amount(), request.description()));
+                debitAccount.debit(username, accountId, request.amount(), request.description()));
     }
 }

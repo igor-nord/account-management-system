@@ -23,12 +23,12 @@ public class GetTransactionService implements GetTransactionUseCase {
     }
 
     @Override
-    public List<AccountTransaction> byTransactionId(Long customerId, String transactionId) {
+    public List<AccountTransaction> byTransactionId(String username, String transactionId) {
         List<AccountTransaction> legs = transactions.findByTransactionId(transactionId);
         if (legs.isEmpty()) {
             throw new TransactionNotFoundException(transactionId);
         }
-        Set<Long> owned = accountAccess.ownedAccounts(customerId).stream()
+        Set<Long> owned = accountAccess.ownedAccounts(username).stream()
                 .map(Account::accountId).collect(Collectors.toSet());
         List<AccountTransaction> visible = legs.stream()
                 .filter(leg -> owned.contains(leg.accountId())).toList();

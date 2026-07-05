@@ -1,8 +1,10 @@
 package com.homework.common.web;
 
 import com.homework.account.usecase.AccountNotFoundException;
+import com.homework.customer.usecase.CustomerNotFoundException;
 import com.homework.transaction.port.ExternalLoggingException;
 import com.homework.transaction.usecase.InsufficientFundsException;
+import com.homework.transaction.usecase.NonEuroDebitException;
 import com.homework.transaction.usecase.SameAccountExchangeException;
 import com.homework.transaction.usecase.TransactionNotFoundException;
 import org.slf4j.Logger;
@@ -29,6 +31,11 @@ class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
     }
 
+    @ExceptionHandler(NonEuroDebitException.class)
+    ProblemDetail handleNonEuroDebit(NonEuroDebitException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+    }
+
     @ExceptionHandler(AccountNotFoundException.class)
     ProblemDetail handleAccountNotFound(AccountNotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
@@ -36,6 +43,11 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(TransactionNotFoundException.class)
     ProblemDetail handleTransactionNotFound(TransactionNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    ProblemDetail handleCustomerNotFound(CustomerNotFoundException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 

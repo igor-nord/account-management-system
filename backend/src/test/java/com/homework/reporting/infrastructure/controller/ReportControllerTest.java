@@ -31,13 +31,13 @@ class ReportControllerTest {
     @Test
     void downloadsTransactionPdf() throws Exception {
         String body = mockMvc().perform(post("/api/account/credit")
-                        .header("X-Customer-Id", "1").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"25.00\"}"))
                 .andReturn().getResponse().getContentAsString();
         String transactionId = JsonPath.read(body, "$.transactionId");
 
         mockMvc().perform(get("/api/transaction/pdf")
-                        .header("X-Customer-Id", "1").header("X-Transaction-Id", transactionId))
+                        .header("X-Username", "demo").header("X-Transaction-Id", transactionId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_PDF))
                 .andExpect(header().string("Content-Disposition", containsString("attachment")))
@@ -47,7 +47,7 @@ class ReportControllerTest {
     @Test
     void unknownTransactionReturns404() throws Exception {
         mockMvc().perform(get("/api/transaction/pdf")
-                        .header("X-Customer-Id", "1").header("X-Transaction-Id", "NOPE"))
+                        .header("X-Username", "demo").header("X-Transaction-Id", "NOPE"))
                 .andExpect(status().isNotFound());
     }
 }

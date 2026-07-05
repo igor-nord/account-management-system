@@ -17,13 +17,12 @@ public class AccountAccess {
         this.accounts = accounts;
     }
 
-    public List<Account> ownedAccounts(Long customerId) {
-        return accounts.findByCustomerId(customerId);
+    public List<Account> ownedAccounts(String username) {
+        return accounts.findByCustomerUsername(username);
     }
 
-    public Account requireOwned(Long customerId, Long accountId) {
-        return accounts.findByAccountId(accountId)
-                .filter(account -> customerId.equals(account.customerId()))
+    public Account requireOwned(String username, Long accountId) {
+        return accounts.findByAccountIdAndCustomerUsername(accountId, username)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
     }
 

@@ -1,5 +1,6 @@
 package com.homework.transaction.infrastructure.controller;
 
+import com.homework.common.web.CurrentUsername;
 import com.homework.transaction.port.GetTransactionUseCase;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,8 +18,8 @@ class TransactionController {
     }
 
     @GetMapping
-    TransactionResponse get(@RequestHeader("X-Customer-Id") Long customerId,
+    TransactionResponse get(@CurrentUsername String username,
                             @RequestHeader("X-Transaction-Id") String transactionId) {
-        return TransactionResponse.of(getTransaction.byTransactionId(customerId, transactionId));
+        return TransactionResponse.of(getTransaction.byTransactionId(username, transactionId));
     }
 }

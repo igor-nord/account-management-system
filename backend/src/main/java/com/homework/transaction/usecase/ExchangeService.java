@@ -36,13 +36,13 @@ public class ExchangeService implements ExchangeUseCase {
 
     @Override
     @Transactional
-    public List<AccountTransaction> exchange(Long customerId, Long sourceAccountId, Long targetAccountId,
+    public List<AccountTransaction> exchange(String username, Long sourceAccountId, Long targetAccountId,
                                              BigDecimal amount) {
         if (sourceAccountId.equals(targetAccountId)) {
             throw new SameAccountExchangeException();
         }
-        Account source = accountAccess.requireOwned(customerId, sourceAccountId);
-        Account target = accountAccess.requireOwned(customerId, targetAccountId);
+        Account source = accountAccess.requireOwned(username, sourceAccountId);
+        Account target = accountAccess.requireOwned(username, targetAccountId);
         if (source.balance().compareTo(amount) < 0) {
             throw new InsufficientFundsException(source.accountId());
         }

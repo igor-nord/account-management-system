@@ -28,8 +28,13 @@ public class AccountRepositoryAdapter implements AccountRepository {
     }
 
     @Override
-    public List<Account> findByCustomerId(Long customerId) {
-        return jdbc.findByCustomerId(customerId);
+    public Optional<Account> findByAccountIdAndCustomerUsername(Long accountId, String username) {
+        return jdbc.findByAccountIdAndCustomerUsername(accountId, username);
+    }
+
+    @Override
+    public List<Account> findByCustomerUsername(String username) {
+        return jdbc.findByCustomerUsername(username);
     }
 
     @Override

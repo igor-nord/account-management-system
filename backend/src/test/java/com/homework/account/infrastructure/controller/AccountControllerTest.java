@@ -23,7 +23,7 @@ class AccountControllerTest {
 
     @Test
     void listsSeededDemoAccounts() throws Exception {
-        mockMvc().perform(get("/api/accounts").header("X-Customer-Id", "1"))
+        mockMvc().perform(get("/api/accounts").header("X-Username", "demo"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3));
     }
@@ -31,7 +31,7 @@ class AccountControllerTest {
     @Test
     void returnsOneAccountWithStringBalance() throws Exception {
         mockMvc().perform(get("/api/account")
-                        .header("X-Customer-Id", "1")
+                        .header("X-Username", "demo")
                         .header("X-Account-Id", "1000011"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountId").value(1000011))
@@ -42,7 +42,7 @@ class AccountControllerTest {
     @Test
     void unknownAccountReturns404() throws Exception {
         mockMvc().perform(get("/api/account")
-                        .header("X-Customer-Id", "1")
+                        .header("X-Username", "demo")
                         .header("X-Account-Id", "9999999"))
                 .andExpect(status().isNotFound());
     }

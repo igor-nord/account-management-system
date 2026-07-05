@@ -1,5 +1,6 @@
 package com.homework.reporting.infrastructure.controller;
 
+import com.homework.common.web.CurrentUsername;
 import com.homework.reporting.port.ExportTransactionPdfUseCase;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
@@ -20,9 +21,9 @@ class ReportController {
     }
 
     @GetMapping("/pdf")
-    ResponseEntity<byte[]> pdf(@RequestHeader("X-Customer-Id") Long customerId,
+    ResponseEntity<byte[]> pdf(@CurrentUsername String username,
                                @RequestHeader("X-Transaction-Id") String transactionId) {
-        byte[] pdf = exportPdf.export(customerId, transactionId);
+        byte[] pdf = exportPdf.export(username, transactionId);
         ContentDisposition disposition = ContentDisposition.attachment()
                 .filename("transaction-" + transactionId + ".pdf").build();
         return ResponseEntity.ok()

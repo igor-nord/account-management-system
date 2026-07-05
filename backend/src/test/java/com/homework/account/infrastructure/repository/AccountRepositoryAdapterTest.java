@@ -45,6 +45,6 @@ class AccountRepositoryAdapterTest {
 
     @Test
     void findsSeededCustomerAccounts() {
-        assertEquals(3, adapter.findByCustomerId(1L).size());
+        assertEquals(3, adapter.findByCustomerUsername("demo").size());
     }
 }

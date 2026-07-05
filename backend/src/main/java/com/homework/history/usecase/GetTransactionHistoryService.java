@@ -23,8 +23,8 @@ public class GetTransactionHistoryService implements GetTransactionHistoryUseCas
     }
 
     @Override
-    public HistoryPage history(Long customerId, Long accountId, int limit, HistoryCursor cursor) {
-        Account account = accountAccess.requireOwned(customerId, accountId);
+    public HistoryPage history(String username, Long accountId, int limit, HistoryCursor cursor) {
+        Account account = accountAccess.requireOwned(username, accountId);
         List<HistoryItem> items = query.page(account.accountId(), limit, cursor);
         HistoryCursor next = items.size() == limit
                 ? new HistoryCursor(items.getLast().createdAt(), items.getLast().transactionId())

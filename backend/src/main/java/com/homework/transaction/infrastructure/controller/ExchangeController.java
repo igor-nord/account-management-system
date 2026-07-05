@@ -1,5 +1,6 @@
 package com.homework.transaction.infrastructure.controller;
 
+import com.homework.common.web.CurrentUsername;
 import com.homework.transaction.port.ExchangeUseCase;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,11 +20,11 @@ class ExchangeController {
     }
 
     @PostMapping
-    TransactionResponse exchange(@RequestHeader("X-Customer-Id") Long customerId,
+    TransactionResponse exchange(@CurrentUsername String username,
                                  @RequestHeader("X-Source-Account-Id") Long sourceAccountId,
                                  @RequestHeader("X-Target-Account-Id") Long targetAccountId,
                                  @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                exchange.exchange(customerId, sourceAccountId, targetAccountId, request.amount()));
+                exchange.exchange(username, sourceAccountId, targetAccountId, request.amount()));
     }
 }

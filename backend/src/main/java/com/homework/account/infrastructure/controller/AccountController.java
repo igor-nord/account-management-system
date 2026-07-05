@@ -1,6 +1,7 @@
 package com.homework.account.infrastructure.controller;
 
 import com.homework.account.usecase.AccountAccess;
+import com.homework.common.web.CurrentUsername;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +20,13 @@ class AccountController {
     }
 
     @GetMapping("/accounts")
-    List<AccountSummary> list(@RequestHeader("X-Customer-Id") Long customerId) {
-        return accountAccess.ownedAccounts(customerId).stream().map(AccountSummary::of).toList();
+    List<AccountSummary> list(@CurrentUsername String username) {
+        return accountAccess.ownedAccounts(username).stream().map(AccountSummary::of).toList();
     }
 
     @GetMapping("/account")
-    AccountSummary get(@RequestHeader("X-Customer-Id") Long customerId,
+    AccountSummary get(@CurrentUsername String username,
                        @RequestHeader("X-Account-Id") Long accountId) {
-        return AccountSummary.of(accountAccess.requireOwned(customerId, accountId));
+        return AccountSummary.of(accountAccess.requireOwned(username, accountId));
     }
 }

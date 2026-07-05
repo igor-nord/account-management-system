@@ -11,7 +11,9 @@ public interface AccountRepository {
 
     Optional<Account> findByAccountId(Long accountId);
 
-    List<Account> findByCustomerId(Long customerId);
+    Optional<Account> findByAccountIdAndCustomerUsername(Long accountId, String username);
+
+    List<Account> findByCustomerUsername(String username);
 
     Optional<Account> findByCodeAndCurrency(LedgerCode code, Currency currency);
 

@@ -1,6 +1,7 @@
 package com.homework.transaction.usecase;
 
 import com.homework.account.domain.Account;
+import com.homework.account.domain.Currency;
 import com.homework.account.domain.LedgerCode;
 import com.homework.account.usecase.AccountAccess;
 import com.homework.transaction.domain.AccountTransaction;
@@ -33,8 +34,11 @@ public class DebitAccountService implements DebitAccountUseCase {
 
     @Override
     @Transactional
-    public List<AccountTransaction> debit(Long customerId, Long accountId, BigDecimal amount, String description) {
-        Account customer = accountAccess.requireOwned(customerId, accountId);
+    public List<AccountTransaction> debit(String username, Long accountId, BigDecimal amount, String description) {
+        Account customer = accountAccess.requireOwned(username, accountId);
+        if (customer.currency() != Currency.EUR) {
+            throw new NonEuroDebitException(customer.accountId(), customer.currency());
+        }
         if (customer.balance().compareTo(amount) < 0) {
             throw new InsufficientFundsException(customer.accountId());
         }

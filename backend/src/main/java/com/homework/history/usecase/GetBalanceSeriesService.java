@@ -21,8 +21,8 @@ public class GetBalanceSeriesService implements GetBalanceSeriesUseCase {
     }
 
     @Override
-    public List<BalancePoint> balanceSeries(Long customerId, Long accountId) {
-        Account account = accountAccess.requireOwned(customerId, accountId);
+    public List<BalancePoint> balanceSeries(String username, Long accountId) {
+        Account account = accountAccess.requireOwned(username, accountId);
         return query.balanceSeries(account.accountId());
     }
 }

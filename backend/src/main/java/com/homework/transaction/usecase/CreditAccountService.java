@@ -29,8 +29,8 @@ public class CreditAccountService implements CreditAccountUseCase {
 
     @Override
     @Transactional
-    public List<AccountTransaction> credit(Long customerId, Long accountId, BigDecimal amount, String description) {
-        Account customer = accountAccess.requireOwned(customerId, accountId);
+    public List<AccountTransaction> credit(String username, Long accountId, BigDecimal amount, String description) {
+        Account customer = accountAccess.requireOwned(username, accountId);
         Account external = accountAccess.ledgerAccount(LedgerCode.EXTERNAL, customer.currency());
         String text = description == null || description.isBlank() ? "Deposit" : description;
         String txnId = ids.newTransactionId();

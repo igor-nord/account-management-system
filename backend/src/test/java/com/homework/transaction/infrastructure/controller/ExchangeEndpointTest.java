@@ -35,20 +35,20 @@ class ExchangeEndpointTest {
     void exchangeMovesMoneyBetweenOwnAccounts() throws Exception {
         doNothing().when(externalLogging).logBeforeDebit(ArgumentMatchers.anyString());
         mockMvc().perform(post("/api/account/credit")
-                .header("X-Customer-Id", "1").header("X-Account-Id", "1000011")
+                .header("X-Username", "demo").header("X-Account-Id", "1000011")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"100.00\"}"));
 
         mockMvc().perform(post("/api/exchange")
-                        .header("X-Customer-Id", "1")
+                        .header("X-Username", "demo")
                         .header("X-Source-Account-Id", "1000011")
                         .header("X-Target-Account-Id", "1000012")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"100.00\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.legs.length()").value(2));
 
-        mockMvc().perform(get("/api/account").header("X-Customer-Id", "1").header("X-Account-Id", "1000011"))
+        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Id", "1000011"))
                 .andExpect(jsonPath("$.balance").value("0.00"));
-        mockMvc().perform(get("/api/account").header("X-Customer-Id", "1").header("X-Account-Id", "1000012"))
+        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Id", "1000012"))
                 .andExpect(jsonPath("$.balance").value("108.00"));
     }
 
@@ -56,7 +56,7 @@ class ExchangeEndpointTest {
     void sameAccountExchangeReturns400() throws Exception {
         doNothing().when(externalLogging).logBeforeDebit(ArgumentMatchers.anyString());
         mockMvc().perform(post("/api/exchange")
-                        .header("X-Customer-Id", "1")
+                        .header("X-Username", "demo")
                         .header("X-Source-Account-Id", "1000011")
                         .header("X-Target-Account-Id", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"1.00\"}"))

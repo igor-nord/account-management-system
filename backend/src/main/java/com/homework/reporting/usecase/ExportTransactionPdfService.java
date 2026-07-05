@@ -20,8 +20,8 @@ public class ExportTransactionPdfService implements ExportTransactionPdfUseCase 
     }
 
     @Override
-    public byte[] export(Long customerId, String transactionId) {
-        List<AccountTransaction> legs = getTransaction.byTransactionId(customerId, transactionId);
+    public byte[] export(String username, String transactionId) {
+        List<AccountTransaction> legs = getTransaction.byTransactionId(username, transactionId);
         AccountTransaction first = legs.getFirst();
         return renderer.render(first.transactionId(), first.createdAt(), legs);
     }

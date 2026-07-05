@@ -1,5 +1,6 @@
 package com.homework.history.infrastructure.controller;
 
+import com.homework.common.web.CurrentUsername;
 import com.homework.history.domain.HistoryCursor;
 import com.homework.history.port.GetBalanceSeriesUseCase;
 import com.homework.history.port.GetTransactionHistoryUseCase;
@@ -22,18 +23,18 @@ class HistoryController {
     }
 
     @GetMapping("/transactions")
-    HistoryPageResponse transactions(@RequestHeader("X-Customer-Id") Long customerId,
+    HistoryPageResponse transactions(@CurrentUsername String username,
                                      @RequestHeader("X-Account-Id") Long accountId,
                                      @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) String cursor) {
         int capped = Math.clamp(limit, 1, 100);
         HistoryCursor decoded = cursor == null ? null : CursorCodec.decode(cursor);
-        return HistoryPageResponse.of(history.history(customerId, accountId, capped, decoded));
+        return HistoryPageResponse.of(history.history(username, accountId, capped, decoded));
     }
 
     @GetMapping("/balance-series")
-    BalanceSeriesResponse balanceSeries(@RequestHeader("X-Customer-Id") Long customerId,
+    BalanceSeriesResponse balanceSeries(@CurrentUsername String username,
                                         @RequestHeader("X-Account-Id") Long accountId) {
-        return BalanceSeriesResponse.of(balanceSeries.balanceSeries(customerId, accountId));
+        return BalanceSeriesResponse.of(balanceSeries.balanceSeries(username, accountId));
     }
 }
