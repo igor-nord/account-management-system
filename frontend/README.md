@@ -1,59 +1,59 @@
-# Frontend
+# Frontend — Account Management SPA
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.18.
+Angular 21 single-page app for the Account Management System. It consumes the Spring Boot
+REST API (see the [root README](../README.md) for the full picture) and covers the
+assignment's three pages: Home, Account Overview, and Transaction Overview.
+
+Standalone components, **zoneless** change detection (signals), **NgRx** state management
+(one feature-store per domain), and **Chart.js** for the balance line chart.
+
+## Prerequisites
+
+- **Node.js** v20+ (an even-numbered LTS is recommended for production builds)
+- The backend running on `http://localhost:8080` (the dev server proxies `/api` to it)
 
 ## Development server
 
-To start a local development server, run:
-
 ```bash
-ng serve
+npm install
+npm start          # ng serve → http://localhost:4200
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+`proxy.conf.json` forwards `/api` → `http://localhost:8080`, so there is no CORS in
+development. Open http://localhost:4200; the SPA reloads on source changes.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
+The current customer is selected on the Home page by **username** and persisted to
+`localStorage`; an HTTP interceptor adds it as the `X-Username` header on every `/api`
+request.
 
 ## Building
 
-To build the project run:
-
 ```bash
-ng build
+npm run build      # ng build → dist/ (production-optimized)
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+For the single-deployable demo jar, the backend's `bootJar -PbundleFrontend` task builds
+this app and bundles it into the Spring Boot jar — see the [root README](../README.md).
 
 ## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
 ```bash
-ng test
+npm test           # ng test (Vitest)
+# or non-interactive:
+npx ng test --watch=false
 ```
 
-## Running end-to-end tests
+## Project structure
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```
+src/app/
+├── core/               HTTP interceptor (X-Username), current-customer service
+├── customer/           customer lookup by username (NgRx feature store)
+├── accounts/           account list + account state (NgRx feature store)
+├── home/               Home page — username search + account list
+├── account-overview/   Account Overview — balance chart, infinite-scroll history, actions
+└── transaction/        Transaction Overview — details + PDF export
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Each domain feature owns its NgRx actions, reducer/feature, and effects. See the
+[root README](../README.md) for architecture, API contract, and conventions.
