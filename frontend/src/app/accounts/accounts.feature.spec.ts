@@ -13,7 +13,7 @@ describe('accountsFeature reducer', () => {
   });
 
   it('stores accounts and clears loading on success', () => {
-    const accounts = [{ accountId: 1000011, currency: 'EUR', balance: '0.00' }];
+    const accounts = [{ accountCode: 1000011, currency: 'EUR', balance: '0.00' }];
     const state = accountsFeature.reducer(
       { ...initial, loading: true },
       AccountsActions.loadAccountsSuccess({ accounts }),

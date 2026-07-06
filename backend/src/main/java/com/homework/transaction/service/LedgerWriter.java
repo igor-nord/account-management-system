@@ -6,40 +6,41 @@ import com.homework.account.repository.AccountRepository;
 import com.homework.transaction.domain.AccountTransaction;
 import com.homework.transaction.domain.TransactionType;
 import com.homework.transaction.repository.TransactionRepository;
-import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class LedgerWriter {
 
     private final TransactionRepository transactions;
-    private final AccountRepository accounts;
+    private final AccountRepository accountRepository;
 
-    public LedgerWriter(TransactionRepository transactions, AccountRepository accounts) {
+    public LedgerWriter(TransactionRepository transactions, AccountRepository accountRepository) {
         this.transactions = transactions;
-        this.accounts = accounts;
+        this.accountRepository = accountRepository;
     }
 
-    public List<AccountTransaction> post(List<AccountTransaction> legs) {
+    public List<AccountTransaction> visibleLegs(List<AccountTransaction> legs, Set<Long> customerAccountCodes) {
+        return post(legs).stream()
+            .filter(leg -> customerAccountCodes.contains(leg.accountCode()))
+            .toList();
+    }
+
+    private List<AccountTransaction> post(List<AccountTransaction> legs) {
         assertZeroSumPerCurrency(legs);
         List<AccountTransaction> saved = transactions.saveAll(legs);
         legs.forEach(this::applyToBalance);
         return saved;
     }
 
-    public List<AccountTransaction> visibleLegs(List<AccountTransaction> legs, Set<Long> customerAccountIds) {
-        return legs.stream().filter(leg -> customerAccountIds.contains(leg.accountId())).toList();
-    }
-
     private void applyToBalance(AccountTransaction leg) {
-        Account account = accounts.findByAccountId(leg.accountId()).orElseThrow();
+        Account account = accountRepository.findByAccountCode(leg.accountCode()).orElseThrow();
         BigDecimal delta = leg.type() == TransactionType.CREDIT ? leg.amount() : leg.amount().negate();
-        accounts.save(account.withBalance(account.balance().add(delta)));
+        accountRepository.save(account.withBalance(account.balance().add(delta)));
     }
 
     private void assertZeroSumPerCurrency(List<AccountTransaction> legs) {

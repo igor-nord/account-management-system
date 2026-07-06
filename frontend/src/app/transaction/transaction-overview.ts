@@ -36,8 +36,8 @@ import { transactionFeature } from './transaction.feature';
           <tbody>
             @for (leg of tx.legs; track $index) {
               <tr>
-                <td>{{ leg.accountId }}</td>
-                <td>{{ leg.counterpartyAccountId }}</td>
+                <td>{{ leg.accountCode }}</td>
+                <td>{{ leg.counterpartyAccountCode }}</td>
                 <td>{{ leg.type }}</td>
                 <td>{{ leg.amount }}</td>
                 <td>{{ leg.currency }}</td>

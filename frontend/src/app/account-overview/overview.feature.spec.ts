@@ -58,7 +58,7 @@ describe('overviewFeature reducer', () => {
 
     const retried = overviewFeature.reducer(
       failed,
-      OverviewActions.credit({ accountId: 1000011, amount: '5.00', description: '' }),
+      OverviewActions.credit({ accountCode: 1000011, amount: '5.00', description: '' }),
     );
     expect(retried.actionError).toBeNull();
   });

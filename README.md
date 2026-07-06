@@ -221,7 +221,7 @@ grouped by one `transaction_id`, such that **each currency independently sums to
 
 - **Accounts** are of two kinds (`account_type`):
   - `CUSTOMER` — a customer wallet, exactly one currency.
-  - `LEDGER` — a system account addressed by a role `code` (`LedgerCode`:
+  - `LEDGER` — a system account addressed by a role `ledger_code` (`LedgerCode`:
     `FX_CLEARING`, `EXTERNAL`), one per currency, with no owning customer.
 - **Credit / debit** = **2 rows**, routed through the `EXTERNAL` ledger account of that
   currency.
@@ -248,8 +248,8 @@ applied to the source amount and rounded HALF_UP to 2 decimals:
 ### Identifiers
 
 - **`account`** has a technical primary key `id` (identity) and a separate **business
-  `account_id`** (unique, from a DB sequence in the range **1,000,000–9,999,999**). The
-  ledger references accounts by the business `account_id`, never the technical `id`.
+  `account_code`** (unique, from a DB sequence in the range **1,000,000–9,999,999**). The
+  ledger references accounts by the business `account_code`, never the technical `id`.
 - **`transaction_id`** is a **TSID** (time-sortable id), generated in the application and
   stamped across every leg of one operation, stored as a 13-char string.
 
@@ -257,7 +257,7 @@ applied to the source amount and rounded HALF_UP to 2 decimals:
 
 Closed value sets are enforced both in code (enums `Currency`, `AccountType`,
 `LedgerCode`) and in the database (`CHECK` constraints on `currency`, `account_type`,
-`code`). Money is encoded as **strings** in JSON to protect `DECIMAL(19,2)` precision
+`ledger_code`). Money is encoded as **strings** in JSON to protect `DECIMAL(19,2)` precision
 from JavaScript floats.
 
 ### Seeded demo data
@@ -280,7 +280,7 @@ driving the real API with `scripts/generate-demo-transactions.sh` (see
 
 There is no authentication (not required). The "current user" and every acted-on
 identifier travel in **request headers**, not the URL: `X-Username` (the customer),
-`X-Account-Id`, `X-Source-Account-Id` / `X-Target-Account-Id`, `X-Transaction-Id`. The
+`X-Account-Code`, `X-Source-Account-Code` / `X-Target-Account-Code`, `X-Transaction-Id`. The
 customer is identified by **username end-to-end** — the technical primary key is never
 the application-level identity: a `HandlerMethodArgumentResolver` validates `X-Username`
 (`404` if the username is unknown, `400` if the header is missing) and injects the
@@ -299,10 +299,10 @@ would not change. Errors are RFC-9457 `application/problem+json`.
 |---|---|
 | `GET /api/customer` | resolve the current customer from the `X-Username` header (returns `{username}`, `404` if unknown) |
 | `GET /api/accounts` | list the customer's accounts (currency + balance) |
-| `GET /api/account` | one account (`X-Account-Id`) |
-| `POST /api/account/credit` | add funds (`X-Account-Id`, body `amount`) |
+| `GET /api/account` | one account (`X-Account-Code`) |
+| `POST /api/account/credit` | add funds (`X-Account-Code`, body `amount`) |
 | `POST /api/account/debit` | withdraw funds (external log first, then debit) |
-| `POST /api/exchange` | fixed-rate transfer (`X-Source-Account-Id`, `X-Target-Account-Id`) |
+| `POST /api/exchange` | fixed-rate transfer (`X-Source-Account-Code`, `X-Target-Account-Code`) |
 | `GET /api/transaction` | one transaction's legs (`X-Transaction-Id`) |
 | `GET /api/transaction/pdf` | downloadable transaction-summary PDF (OpenPDF) |
 | `GET /api/account/transactions?limit=&cursor=` | history, newest-first, **keyset pagination** for infinite scroll (`nextCursor` `null` on the last page) |
@@ -320,7 +320,7 @@ domain and **Chart.js**.
 
 - **Home** — a **username search**: enter a customer's username to see that customer and
   their accounts (currency + balance); each account links to its overview.
-- **Account Overview** (`/accounts/:accountId`) — account header, a **balance line
+- **Account Overview** (`/accounts/:accountCode`) — account header, a **balance line
   chart** (Chart.js on `/balance-series`), and **infinite-scroll history** (keyset
   cursor, driven by an `IntersectionObserver` on a bottom sentinel). It also exposes
   **credit / debit / exchange** action forms; on success the balance, history, and
@@ -331,7 +331,7 @@ domain and **Chart.js**.
 
 A `CurrentCustomer` service holds the selected username (persisted to `localStorage`); a
 functional `HttpInterceptor` adds it as `X-Username` on every `/api` request, and the
-services add the per-request `X-Account-Id` / `X-Transaction-Id`. In development, a proxy
+services add the per-request `X-Account-Code` / `X-Transaction-Id`. In development, a proxy
 forwards `/api` → `:8080` (no CORS).
 
 ---

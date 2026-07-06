@@ -1,5 +1,5 @@
 export interface AccountSummary {
-  accountId: number;
+  accountCode: number;
   currency: string;
   balance: string;
 }

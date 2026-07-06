@@ -9,7 +9,7 @@ const tx: TransactionResponse = {
   transactionId: 'TXN1',
   createdAt: '2026-01-01T00:00:00Z',
   legs: [
-    { accountId: 1000011, counterpartyAccountId: 1000006, type: 'CREDIT', amount: '25.00', currency: 'EUR', description: 'Deposit' },
+    { accountCode: 1000011, counterpartyAccountCode: 1000006, type: 'CREDIT', amount: '25.00', currency: 'EUR', description: 'Deposit' },
   ],
 };
 

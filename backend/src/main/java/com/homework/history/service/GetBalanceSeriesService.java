@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface GetBalanceSeriesService {
 
-    List<BalancePoint> balanceSeries(String username, Long accountId);
+    List<BalancePoint> balanceSeries(String username, Long accountCode);
 }

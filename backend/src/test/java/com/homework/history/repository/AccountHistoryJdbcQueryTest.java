@@ -28,9 +28,9 @@ class AccountHistoryJdbcQueryTest {
 
     private int seq = 0;
 
-    private void leg(long accountId, TransactionType type, String amount) {
+    private void leg(long accountCode, TransactionType type, String amount) {
         seq++;
-        transactions.save(AccountTransaction.newLeg("T" + String.format("%012d", seq), accountId, 1000006L,
+        transactions.save(AccountTransaction.newLeg("T" + String.format("%012d", seq), accountCode, 1000006L,
                 type, new BigDecimal(amount), Currency.EUR, "x"));
     }
 

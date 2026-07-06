@@ -21,25 +21,25 @@ public class AccountRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Optional<Account> findByAccountId(Long accountId) {
-        return accountDao.findByAccountId(accountId);
+    public Optional<Account> findByAccountCode(Long accountCode) {
+        return accountDao.findByAccountCode(accountCode);
     }
 
-    public Optional<Account> findByAccountIdAndCustomerUsername(Long accountId, String username) {
-        return accountDao.findByAccountIdAndCustomerUsername(accountId, username);
+    public Optional<Account> findByAccountCodeAndCustomerUsername(Long accountCode, String username) {
+        return accountDao.findByAccountCodeAndCustomerUsername(accountCode, username);
     }
 
     public List<Account> findByCustomerUsername(String username) {
         return accountDao.findByCustomerUsername(username);
     }
 
-    public Optional<Account> findByCodeAndCurrency(LedgerCode code, Currency currency) {
-        return accountDao.findByCodeAndCurrency(code, currency);
+    public Optional<Account> findByLedgerCodeAndCurrency(LedgerCode ledgerCode, Currency currency) {
+        return accountDao.findByLedgerCodeAndCurrency(ledgerCode, currency);
     }
 
     public Account save(Account account) {
         Instant now = Instant.now();
-        Long businessId = account.accountId() != null ? account.accountId() : nextAccountId();
+        Long businessId = account.accountCode() != null ? account.accountCode() : nextAccountCode();
         Instant createdAt = account.createdAt() != null ? account.createdAt() : now;
 
         Account toSave = new Account(
@@ -47,7 +47,7 @@ public class AccountRepository {
                 businessId,
                 account.customerId(),
                 account.accountType(),
-                account.code(),
+                account.ledgerCode(),
                 account.currency(),
                 account.balance(),
                 createdAt,
@@ -56,7 +56,7 @@ public class AccountRepository {
         return accountDao.save(toSave);
     }
 
-    private Long nextAccountId() {
-        return jdbcTemplate.queryForObject("SELECT NEXT VALUE FOR account_id_seq", Long.class);
+    private Long nextAccountCode() {
+        return jdbcTemplate.queryForObject("SELECT NEXT VALUE FOR account_code_seq", Long.class);
     }
 }

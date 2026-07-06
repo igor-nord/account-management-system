@@ -28,7 +28,7 @@ class HistoryControllerTest {
 
     private void credit(String amount) throws Exception {
         mockMvc().perform(post("/api/account/credit")
-                .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                .header("X-Username", "demo").header("X-Account-Code", "1000011")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"" + amount + "\"}"));
     }
 
@@ -39,7 +39,7 @@ class HistoryControllerTest {
         credit("30.00");
 
         String body = mockMvc().perform(get("/api/account/transactions")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011").param("limit", "2"))
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011").param("limit", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(2))
                 .andExpect(jsonPath("$.items[0].amount").value("30.00"))
@@ -47,7 +47,7 @@ class HistoryControllerTest {
         String cursor = JsonPath.read(body, "$.nextCursor");
 
         mockMvc().perform(get("/api/account/transactions")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .param("limit", "2").param("cursor", cursor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(1))
@@ -61,7 +61,7 @@ class HistoryControllerTest {
         credit("50.00");
 
         mockMvc().perform(get("/api/account/balance-series")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011"))
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.points.length()").value(2))
                 .andExpect(jsonPath("$.points[0].balance").value("10.00"))
@@ -71,7 +71,7 @@ class HistoryControllerTest {
     @Test
     void notOwnedAccountReturns404() throws Exception {
         mockMvc().perform(get("/api/account/transactions")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000001"))
+                        .header("X-Username", "demo").header("X-Account-Code", "1000001"))
                 .andExpect(status().isNotFound());
     }
 
@@ -80,7 +80,7 @@ class HistoryControllerTest {
         credit("10.00");
 
         mockMvc().perform(get("/api/account/transactions")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011").param("cursor", ""))
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011").param("cursor", ""))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items.length()").value(1));
     }
@@ -88,7 +88,7 @@ class HistoryControllerTest {
     @Test
     void malformedCursorReturns400() throws Exception {
         mockMvc().perform(get("/api/account/transactions")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .param("cursor", "not-base64!!"))
                 .andExpect(status().isBadRequest());
     }

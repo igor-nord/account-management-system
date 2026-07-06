@@ -1,6 +1,6 @@
 export interface TransactionLeg {
-  accountId: number;
-  counterpartyAccountId: number;
+  accountCode: number;
+  counterpartyAccountCode: number;
   type: string;
   amount: string;
   currency: string;

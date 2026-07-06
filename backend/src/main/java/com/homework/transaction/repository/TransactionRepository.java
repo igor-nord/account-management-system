@@ -28,8 +28,8 @@ public class TransactionRepository {
         return result;
     }
 
-    public List<AccountTransaction> findByAccountId(Long accountId) {
-        return accountTransactionDao.findByAccountIdOrderByCreatedAtAscIdAsc(accountId);
+    public List<AccountTransaction> findByAccountCode(Long accountCode) {
+        return accountTransactionDao.findByAccountCodeOrderByCreatedAtAscIdAsc(accountCode);
     }
 
     public List<AccountTransaction> findByTransactionId(String transactionId) {
@@ -43,8 +43,8 @@ public class TransactionRepository {
         return new AccountTransaction(
                 transaction.id(),
                 transaction.transactionId(),
-                transaction.accountId(),
-                transaction.counterpartyAccountId(),
+                transaction.accountCode(),
+                transaction.counterpartyAccountCode(),
                 transaction.type(),
                 transaction.amount(),
                 transaction.currency(),

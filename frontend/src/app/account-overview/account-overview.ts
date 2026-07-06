@@ -16,7 +16,7 @@ import { overviewFeature } from './overview.feature';
       <a routerLink="/">← All accounts</a>
 
       @if (account(); as acc) {
-        <h1>Account {{ acc.accountId }}</h1>
+        <h1>Account {{ acc.accountCode }}</h1>
         <p>Balance: {{ acc.balance }} {{ acc.currency }}</p>
       }
 
@@ -43,8 +43,8 @@ import { overviewFeature } from './overview.feature';
           <strong>Exchange to</strong>
           <select name="exchangeTarget" [(ngModel)]="exchangeTargetId">
             <option [ngValue]="null" disabled>select account</option>
-            @for (a of otherAccounts(); track a.accountId) {
-              <option [ngValue]="a.accountId">{{ a.accountId }} ({{ a.currency }})</option>
+            @for (a of otherAccounts(); track a.accountCode) {
+              <option [ngValue]="a.accountCode">{{ a.accountCode }} ({{ a.currency }})</option>
             }
           </select>
           <input name="exchangeAmount" [(ngModel)]="exchangeAmount" placeholder="amount (source currency)" />
@@ -79,7 +79,7 @@ import { overviewFeature } from './overview.feature';
   `,
 })
 export class AccountOverview implements OnDestroy {
-  readonly accountId = input.required<number, string>({ transform: (value) => Number(value) });
+  readonly accountCode = input.required<number, string>({ transform: (value) => Number(value) });
 
   private readonly store = inject(Store);
   private readonly sentinel = viewChild.required<ElementRef<HTMLElement>>('sentinel');
@@ -94,7 +94,7 @@ export class AccountOverview implements OnDestroy {
   readonly actionError = this.store.selectSignal(overviewFeature.selectActionError);
   private readonly accounts = this.store.selectSignal(accountsFeature.selectAccounts);
   readonly otherAccounts = computed(() =>
-    this.accounts().filter((a) => a.accountId !== this.accountId()),
+    this.accounts().filter((a) => a.accountCode !== this.accountCode()),
   );
 
   creditAmount = '';
@@ -106,11 +106,11 @@ export class AccountOverview implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const accountId = this.accountId();
+      const accountCode = this.accountCode();
       this.store.dispatch(OverviewActions.reset());
-      this.store.dispatch(OverviewActions.loadAccount({ accountId }));
-      this.store.dispatch(OverviewActions.loadHistory({ accountId }));
-      this.store.dispatch(OverviewActions.loadBalanceSeries({ accountId }));
+      this.store.dispatch(OverviewActions.loadAccount({ accountCode }));
+      this.store.dispatch(OverviewActions.loadHistory({ accountCode }));
+      this.store.dispatch(OverviewActions.loadBalanceSeries({ accountCode }));
       this.store.dispatch(AccountsActions.loadAccounts());
     });
 
@@ -121,7 +121,7 @@ export class AccountOverview implements OnDestroy {
         }
         const cursor = this.nextCursor();
         if (cursor && !this.historyLoading()) {
-          this.store.dispatch(OverviewActions.loadMoreHistory({ accountId: this.accountId(), cursor }));
+          this.store.dispatch(OverviewActions.loadMoreHistory({ accountCode: this.accountCode(), cursor }));
         }
       });
       this.observer.observe(this.sentinel().nativeElement);
@@ -138,7 +138,7 @@ export class AccountOverview implements OnDestroy {
     }
     this.store.dispatch(
       OverviewActions.credit({
-        accountId: this.accountId(),
+        accountCode: this.accountCode(),
         amount: this.creditAmount,
         description: this.creditDescription,
       }),
@@ -153,7 +153,7 @@ export class AccountOverview implements OnDestroy {
     }
     this.store.dispatch(
       OverviewActions.debit({
-        accountId: this.accountId(),
+        accountCode: this.accountCode(),
         amount: this.debitAmount,
         description: this.debitDescription,
       }),
@@ -168,8 +168,8 @@ export class AccountOverview implements OnDestroy {
     }
     this.store.dispatch(
       OverviewActions.exchange({
-        sourceAccountId: this.accountId(),
-        targetAccountId: this.exchangeTargetId,
+        sourceAccountCode: this.accountCode(),
+        targetAccountCode: this.exchangeTargetId,
         amount: this.exchangeAmount,
       }),
     );

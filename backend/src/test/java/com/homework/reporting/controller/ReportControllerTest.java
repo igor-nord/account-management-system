@@ -31,7 +31,7 @@ class ReportControllerTest {
     @Test
     void downloadsTransactionPdf() throws Exception {
         String body = mockMvc().perform(post("/api/account/credit")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"25.00\"}"))
                 .andReturn().getResponse().getContentAsString();
         String transactionId = JsonPath.read(body, "$.transactionId");

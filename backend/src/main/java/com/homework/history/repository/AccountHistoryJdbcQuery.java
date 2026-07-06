@@ -21,11 +21,11 @@ public class AccountHistoryJdbcQuery {
         this.jdbc = jdbc;
     }
 
-    public List<HistoryItem> page(Long accountId, int limit, HistoryCursor cursor) {
+    public List<HistoryItem> page(Long accountCode, int limit, HistoryCursor cursor) {
         String sql = """
                 SELECT transaction_id, type, amount, currency, description, created_at
                 FROM account_transaction
-                WHERE account_id = :accountId
+                WHERE account_code = :accountCode
                   AND (:cursorCreatedAt IS NULL
                        OR created_at < :cursorCreatedAt
                        OR (created_at = :cursorCreatedAt AND transaction_id < :cursorTxnId))
@@ -33,7 +33,7 @@ public class AccountHistoryJdbcQuery {
                 LIMIT :limit
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("accountId", accountId)
+                .addValue("accountCode", accountCode)
                 .addValue("cursorCreatedAt", cursor == null ? null : Timestamp.from(cursor.createdAt()))
                 .addValue("cursorTxnId", cursor == null ? null : cursor.transactionId())
                 .addValue("limit", limit);
@@ -46,16 +46,16 @@ public class AccountHistoryJdbcQuery {
                 rs.getTimestamp("created_at").toInstant()));
     }
 
-    public List<BalancePoint> balanceSeries(Long accountId) {
+    public List<BalancePoint> balanceSeries(Long accountCode) {
         String sql = """
                 SELECT created_at,
                        SUM(CASE WHEN type = 'CREDIT' THEN amount ELSE -amount END)
                            OVER (ORDER BY created_at ASC, id ASC) AS balance
                 FROM account_transaction
-                WHERE account_id = :accountId
+                WHERE account_code = :accountCode
                 ORDER BY created_at ASC, id ASC
                 """;
-        MapSqlParameterSource params = new MapSqlParameterSource().addValue("accountId", accountId);
+        MapSqlParameterSource params = new MapSqlParameterSource().addValue("accountCode", accountCode);
         return jdbc.query(sql, params, (rs, rowNum) -> new BalancePoint(
                 rs.getTimestamp("created_at").toInstant(),
                 rs.getBigDecimal("balance")));

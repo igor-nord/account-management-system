@@ -7,7 +7,7 @@ import java.util.List;
 
 interface AccountTransactionDao extends CrudRepository<AccountTransaction, Long> {
 
-    List<AccountTransaction> findByAccountIdOrderByCreatedAtAscIdAsc(Long accountId);
+    List<AccountTransaction> findByAccountCodeOrderByCreatedAtAscIdAsc(Long accountCode);
 
     List<AccountTransaction> findByTransactionIdOrderByIdAsc(String transactionId);
 }

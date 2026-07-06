@@ -11,18 +11,18 @@ import java.time.Instant;
 public record AccountTransaction(
         @Id Long id,
         String transactionId,
-        Long accountId,
-        Long counterpartyAccountId,
+        Long accountCode,
+        Long counterpartyAccountCode,
         TransactionType type,
         BigDecimal amount,
         Currency currency,
         String description,
         Instant createdAt) {
 
-    public static AccountTransaction newLeg(String transactionId, Long accountId, Long counterpartyAccountId,
+    public static AccountTransaction newLeg(String transactionId, Long accountCode, Long counterpartyAccountCode,
                                             TransactionType type, BigDecimal amount, Currency currency,
                                             String description) {
-        return new AccountTransaction(null, transactionId, accountId, counterpartyAccountId, type,
+        return new AccountTransaction(null, transactionId, accountCode, counterpartyAccountCode, type,
                 amount, currency, description, null);
     }
 }

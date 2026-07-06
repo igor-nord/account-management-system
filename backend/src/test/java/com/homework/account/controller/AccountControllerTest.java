@@ -32,9 +32,9 @@ class AccountControllerTest {
     void returnsOneAccountWithStringBalance() throws Exception {
         mockMvc().perform(get("/api/account")
                         .header("X-Username", "demo")
-                        .header("X-Account-Id", "1000011"))
+                        .header("X-Account-Code", "1000011"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accountId").value(1000011))
+                .andExpect(jsonPath("$.accountCode").value(1000011))
                 .andExpect(jsonPath("$.currency").value("EUR"))
                 .andExpect(jsonPath("$.balance").value("0.00"));
     }
@@ -43,7 +43,7 @@ class AccountControllerTest {
     void unknownAccountReturns404() throws Exception {
         mockMvc().perform(get("/api/account")
                         .header("X-Username", "demo")
-                        .header("X-Account-Id", "9999999"))
+                        .header("X-Account-Code", "9999999"))
                 .andExpect(status().isNotFound());
     }
 }

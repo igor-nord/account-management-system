@@ -24,17 +24,17 @@ class HistoryController {
 
     @GetMapping("/transactions")
     HistoryPageResponse transactions(@CurrentUsername String username,
-                                     @RequestHeader("X-Account-Id") Long accountId,
+                                     @RequestHeader("X-Account-Code") Long accountCode,
                                      @RequestParam(defaultValue = "20") int limit,
                                      @RequestParam(required = false) String cursor) {
         int capped = Math.clamp(limit, 1, 100);
         HistoryCursor decoded = (cursor == null || cursor.isBlank()) ? null : CursorCodec.decode(cursor);
-        return HistoryPageResponse.of(history.history(username, accountId, capped, decoded));
+        return HistoryPageResponse.of(history.history(username, accountCode, capped, decoded));
     }
 
     @GetMapping("/balance-series")
     BalanceSeriesResponse balanceSeries(@CurrentUsername String username,
-                                        @RequestHeader("X-Account-Id") Long accountId) {
-        return BalanceSeriesResponse.of(balanceSeries.balanceSeries(username, accountId));
+                                        @RequestHeader("X-Account-Code") Long accountCode) {
+        return BalanceSeriesResponse.of(balanceSeries.balanceSeries(username, accountCode));
     }
 }

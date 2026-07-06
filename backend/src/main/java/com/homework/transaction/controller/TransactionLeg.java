@@ -8,15 +8,15 @@ import com.homework.transaction.domain.TransactionType;
 import java.math.BigDecimal;
 
 public record TransactionLeg(
-        Long accountId,
-        Long counterpartyAccountId,
+        Long accountCode,
+        Long counterpartyAccountCode,
         TransactionType type,
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal amount,
         Currency currency,
         String description) {
 
     public static TransactionLeg of(AccountTransaction leg) {
-        return new TransactionLeg(leg.accountId(), leg.counterpartyAccountId(), leg.type(),
+        return new TransactionLeg(leg.accountCode(), leg.counterpartyAccountCode(), leg.type(),
                 leg.amount(), leg.currency(), leg.description());
     }
 }

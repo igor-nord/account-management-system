@@ -5,5 +5,5 @@ import com.homework.history.domain.HistoryPage;
 
 public interface GetTransactionHistoryService {
 
-    HistoryPage history(String username, Long accountId, int limit, HistoryCursor cursor);
+    HistoryPage history(String username, Long accountCode, int limit, HistoryCursor cursor);
 }

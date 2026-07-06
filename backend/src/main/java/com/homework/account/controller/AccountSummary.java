@@ -7,11 +7,11 @@ import com.homework.account.domain.Currency;
 import java.math.BigDecimal;
 
 public record AccountSummary(
-        Long accountId,
+        Long accountCode,
         Currency currency,
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal balance) {
 
     public static AccountSummary of(Account account) {
-        return new AccountSummary(account.accountId(), account.currency(), account.balance());
+        return new AccountSummary(account.accountCode(), account.currency(), account.balance());
     }
 }

@@ -13,10 +13,10 @@
             <column name="transaction_id" type="VARCHAR(13)">
                 <constraints nullable="false"/>
             </column>
-            <column name="account_id" type="BIGINT">
+            <column name="account_code" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="counterparty_account_id" type="BIGINT">
+            <column name="counterparty_account_code" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="VARCHAR(6)">
@@ -37,11 +37,11 @@
         </createTable>
 
         <addUniqueConstraint tableName="account_transaction"
-                             columnNames="transaction_id, account_id, currency"
+                             columnNames="transaction_id, account_code, currency"
                              constraintName="uq_txn_account_currency"/>
 
         <createIndex tableName="account_transaction" indexName="idx_txn_account_created">
-            <column name="account_id"/>
+            <column name="account_code"/>
             <column name="created_at"/>
         </createIndex>
 

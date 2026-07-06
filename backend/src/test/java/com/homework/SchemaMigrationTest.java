@@ -24,7 +24,7 @@ class SchemaMigrationTest {
         assertEquals(23, accounts);
 
         Long fxClearingUsd = jdbc.queryForObject(
-                "SELECT account_id FROM account WHERE code = 'FX_CLEARING' AND currency = 'USD'", Long.class);
+                "SELECT account_code FROM account WHERE ledger_code = 'FX_CLEARING' AND currency = 'USD'", Long.class);
         assertEquals(1000002L, fxClearingUsd);
 
         Integer transactions = jdbc.queryForObject("SELECT COUNT(*) FROM account_transaction", Integer.class);

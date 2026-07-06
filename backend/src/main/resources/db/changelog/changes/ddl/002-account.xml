@@ -5,9 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd">
 
-    <!-- Sequence supplying the business account_id (1,000,000–9,999,999) -->
+    <!-- Sequence supplying the business account_code (1,000,000–9,999,999) -->
     <changeSet id="ddl-002-account-id-seq" author="igor">
-        <createSequence sequenceName="account_id_seq"
+        <createSequence sequenceName="account_code_seq"
                         startValue="1001000"
                         minValue="1000000"
                         maxValue="9999999"
@@ -19,7 +19,7 @@
             <column name="id" type="BIGINT" autoIncrement="true" startWith="1001000">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="account_id" type="BIGINT">
+            <column name="account_code" type="BIGINT">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="customer_id" type="BIGINT">
@@ -31,7 +31,7 @@
             <column name="account_type" type="VARCHAR(8)">
                 <constraints nullable="false"/>
             </column>
-            <column name="code" type="VARCHAR(20)"/>
+            <column name="ledger_code" type="VARCHAR(20)"/>
             <column name="currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
@@ -47,12 +47,12 @@
         </createTable>
 
         <addUniqueConstraint tableName="account"
-                             columnNames="code, currency"
-                             constraintName="uq_account_code_currency"/>
+                             columnNames="ledger_code, currency"
+                             constraintName="uq_account_ledger_code_currency"/>
 
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_type CHECK (account_type IN ('CUSTOMER','LEDGER'))</sql>
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_currency CHECK (currency IN ('EUR','USD','SEK','GBP','VND'))</sql>
-        <sql>ALTER TABLE account ADD CONSTRAINT chk_account_code CHECK (code IS NULL OR code IN ('FX_CLEARING','EXTERNAL'))</sql>
+        <sql>ALTER TABLE account ADD CONSTRAINT chk_account_ledger_code CHECK (ledger_code IS NULL OR ledger_code IN ('FX_CLEARING','EXTERNAL'))</sql>
     </changeSet>
 
 </databaseChangeLog>

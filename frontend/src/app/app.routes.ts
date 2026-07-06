@@ -5,6 +5,6 @@ import { TransactionOverview } from './transaction/transaction-overview';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'accounts/:accountId', component: AccountOverview },
+  { path: 'accounts/:accountCode', component: AccountOverview },
   { path: 'transactions/:transactionId', component: TransactionOverview },
 ];

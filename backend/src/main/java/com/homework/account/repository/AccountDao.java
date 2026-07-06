@@ -12,14 +12,14 @@ import java.util.Optional;
 
 interface AccountDao extends CrudRepository<Account, Long> {
 
-    Optional<Account> findByAccountId(Long accountId);
+    Optional<Account> findByAccountCode(Long accountCode);
 
     @Query("""
             SELECT a.* FROM account a
             JOIN customer c ON a.customer_id = c.id
-            WHERE a.account_id = :accountId AND c.username = :username
+            WHERE a.account_code = :accountCode AND c.username = :username
             """)
-    Optional<Account> findByAccountIdAndCustomerUsername(@Param("accountId") Long accountId,
+    Optional<Account> findByAccountCodeAndCustomerUsername(@Param("accountCode") Long accountCode,
                                                          @Param("username") String username);
 
     @Query("""
@@ -29,5 +29,5 @@ interface AccountDao extends CrudRepository<Account, Long> {
             """)
     List<Account> findByCustomerUsername(@Param("username") String username);
 
-    Optional<Account> findByCodeAndCurrency(LedgerCode code, Currency currency);
+    Optional<Account> findByLedgerCodeAndCurrency(LedgerCode ledgerCode, Currency currency);
 }

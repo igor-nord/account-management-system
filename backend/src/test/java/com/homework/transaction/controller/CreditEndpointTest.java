@@ -29,7 +29,7 @@ class CreditEndpointTest {
     void creditRaisesBalanceAndReturnsTransaction() throws Exception {
         mockMvc().perform(post("/api/account/credit")
                         .header("X-Username", "demo")
-                        .header("X-Account-Id", "1000011")
+                        .header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"amount\":\"25.00\",\"description\":\"salary\"}"))
                 .andExpect(status().isOk())
@@ -39,7 +39,7 @@ class CreditEndpointTest {
 
         mockMvc().perform(get("/api/account")
                         .header("X-Username", "demo")
-                        .header("X-Account-Id", "1000011"))
+                        .header("X-Account-Code", "1000011"))
                 .andExpect(jsonPath("$.balance").value("25.00"));
     }
 
@@ -47,7 +47,7 @@ class CreditEndpointTest {
     void rejectsNonPositiveAmount() throws Exception {
         mockMvc().perform(post("/api/account/credit")
                         .header("X-Username", "demo")
-                        .header("X-Account-Id", "1000011")
+                        .header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"amount\":\"0\",\"description\":\"x\"}"))
                 .andExpect(status().isBadRequest());

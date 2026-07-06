@@ -26,21 +26,21 @@ class AccountRepositoryTest {
         Account saved = adapter.save(Account.newCustomerAccount(1L, Currency.GBP));
 
         assertNotNull(saved.id(), "technical id assigned");
-        assertNotNull(saved.accountId(), "business account_id assigned");
-        assertTrue(saved.accountId() >= 1000100L, "business id drawn from the sequence range");
+        assertNotNull(saved.accountCode(), "business account_code assigned");
+        assertTrue(saved.accountCode() >= 1000100L, "business id drawn from the sequence range");
         assertNotNull(saved.createdAt());
         assertNotNull(saved.updatedAt());
 
-        Optional<Account> reloaded = adapter.findByAccountId(saved.accountId());
+        Optional<Account> reloaded = adapter.findByAccountCode(saved.accountCode());
         assertTrue(reloaded.isPresent());
         assertEquals(Currency.GBP, reloaded.get().currency());
     }
 
     @Test
     void findsSeededLedgerAccountByCodeAndCurrency() {
-        Optional<Account> fx = adapter.findByCodeAndCurrency(LedgerCode.FX_CLEARING, Currency.USD);
+        Optional<Account> fx = adapter.findByLedgerCodeAndCurrency(LedgerCode.FX_CLEARING, Currency.USD);
         assertTrue(fx.isPresent());
-        assertEquals(1000002L, fx.get().accountId());
+        assertEquals(1000002L, fx.get().accountCode());
     }
 
     @Test

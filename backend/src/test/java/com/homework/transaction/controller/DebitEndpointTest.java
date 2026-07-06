@@ -34,9 +34,9 @@ class DebitEndpointTest {
         return MockMvcBuilders.webAppContextSetup(context).build();
     }
 
-    private void credit(String accountId, String amount) throws Exception {
+    private void credit(String accountCode, String amount) throws Exception {
         mockMvc().perform(post("/api/account/credit")
-                .header("X-Username", "demo").header("X-Account-Id", accountId)
+                .header("X-Username", "demo").header("X-Account-Code", accountCode)
                 .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"" + amount + "\"}"));
     }
 
@@ -46,12 +46,12 @@ class DebitEndpointTest {
         credit("1000011", "100.00");
 
         mockMvc().perform(post("/api/account/debit")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"30.00\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.legs[0].type").value("DEBIT"));
 
-        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Id", "1000011"))
+        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Code", "1000011"))
                 .andExpect(jsonPath("$.balance").value("70.00"));
     }
 
@@ -59,7 +59,7 @@ class DebitEndpointTest {
     void insufficientFundsReturns422() throws Exception {
         doNothing().when(externalLogging).logBeforeDebit(ArgumentMatchers.anyString());
         mockMvc().perform(post("/api/account/debit")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"5.00\"}"))
                 .andExpect(status().isUnprocessableContent());
     }
@@ -69,7 +69,7 @@ class DebitEndpointTest {
         credit("1000012", "50.00");
 
         mockMvc().perform(post("/api/account/debit")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000012")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000012")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"10.00\"}"))
                 .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.detail", containsString("EUR")));
@@ -82,12 +82,12 @@ class DebitEndpointTest {
                 .when(externalLogging).logBeforeDebit(ArgumentMatchers.anyString());
 
         mockMvc().perform(post("/api/account/debit")
-                        .header("X-Username", "demo").header("X-Account-Id", "1000011")
+                        .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"10.00\"}"))
                 .andExpect(status().isBadGateway())
                 .andExpect(jsonPath("$.detail").value("Internal error. Please try again later or contact our support."));
 
-        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Id", "1000011"))
+        mockMvc().perform(get("/api/account").header("X-Username", "demo").header("X-Account-Code", "1000011"))
                 .andExpect(jsonPath("$.balance").value("40.00"));
     }
 }

@@ -21,9 +21,9 @@ class TransactionRepositoryTest {
     @Autowired
     private TransactionRepository adapter;
 
-    private static AccountTransaction leg(String txnId, long accountId, long counterparty,
+    private static AccountTransaction leg(String txnId, long accountCode, long counterparty,
                                           TransactionType type, String amount, Currency currency) {
-        return new AccountTransaction(null, txnId, accountId, counterparty, type,
+        return new AccountTransaction(null, txnId, accountCode, counterparty, type,
                 new BigDecimal(amount), currency, "Exchange USD->EUR", null);
     }
 
@@ -45,7 +45,7 @@ class TransactionRepositoryTest {
 
         adapter.saveAll(legs);
 
-        List<AccountTransaction> forCustomerUsd = adapter.findByAccountId(1000012L);
+        List<AccountTransaction> forCustomerUsd = adapter.findByAccountCode(1000012L);
         assertEquals(1, forCustomerUsd.size());
         assertEquals(TransactionType.DEBIT, forCustomerUsd.getFirst().type());
     }

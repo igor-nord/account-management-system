@@ -18,8 +18,8 @@ export const loadAccount$ = createEffect(
   (actions$ = inject(Actions), api = inject(AccountApi)) =>
     actions$.pipe(
       ofType(OverviewActions.loadAccount),
-      switchMap(({ accountId }) =>
-        api.getAccount(accountId).pipe(
+      switchMap(({ accountCode }) =>
+        api.getAccount(accountCode).pipe(
           map((account) => OverviewActions.loadAccountSuccess({ account })),
           catchError((error) => of(OverviewActions.loadAccountFailure({ error: message(error) }))),
         ),
@@ -32,8 +32,8 @@ export const loadHistory$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.loadHistory),
-      switchMap(({ accountId }) =>
-        api.getHistory(accountId, PAGE_SIZE).pipe(
+      switchMap(({ accountCode }) =>
+        api.getHistory(accountCode, PAGE_SIZE).pipe(
           map(({ items, nextCursor }) => OverviewActions.loadHistorySuccess({ items, nextCursor })),
           catchError((error) => of(OverviewActions.loadHistoryFailure({ error: message(error) }))),
         ),
@@ -46,8 +46,8 @@ export const loadMoreHistory$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.loadMoreHistory),
-      switchMap(({ accountId, cursor }) =>
-        api.getHistory(accountId, PAGE_SIZE, cursor).pipe(
+      switchMap(({ accountCode, cursor }) =>
+        api.getHistory(accountCode, PAGE_SIZE, cursor).pipe(
           map(({ items, nextCursor }) => OverviewActions.loadMoreHistorySuccess({ items, nextCursor })),
           catchError((error) => of(OverviewActions.loadMoreHistoryFailure({ error: message(error) }))),
         ),
@@ -60,8 +60,8 @@ export const loadBalanceSeries$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.loadBalanceSeries),
-      switchMap(({ accountId }) =>
-        api.getBalanceSeries(accountId).pipe(
+      switchMap(({ accountCode }) =>
+        api.getBalanceSeries(accountCode).pipe(
           map(({ points }) => OverviewActions.loadBalanceSeriesSuccess({ points })),
           catchError((error) => of(OverviewActions.loadBalanceSeriesFailure({ error: message(error) }))),
         ),
@@ -74,9 +74,9 @@ export const credit$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.credit),
-      mergeMap(({ accountId, amount, description }) =>
-        api.credit(accountId, amount, description).pipe(
-          map(() => OverviewActions.actionSucceeded({ accountId })),
+      mergeMap(({ accountCode, amount, description }) =>
+        api.credit(accountCode, amount, description).pipe(
+          map(() => OverviewActions.actionSucceeded({ accountCode })),
           catchError((error) => of(OverviewActions.actionFailed({ error: message(error) }))),
         ),
       ),
@@ -88,9 +88,9 @@ export const debit$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.debit),
-      mergeMap(({ accountId, amount, description }) =>
-        api.debit(accountId, amount, description).pipe(
-          map(() => OverviewActions.actionSucceeded({ accountId })),
+      mergeMap(({ accountCode, amount, description }) =>
+        api.debit(accountCode, amount, description).pipe(
+          map(() => OverviewActions.actionSucceeded({ accountCode })),
           catchError((error) => of(OverviewActions.actionFailed({ error: message(error) }))),
         ),
       ),
@@ -102,9 +102,9 @@ export const exchange$ = createEffect(
   (actions$ = inject(Actions), api = inject(OverviewApi)) =>
     actions$.pipe(
       ofType(OverviewActions.exchange),
-      mergeMap(({ sourceAccountId, targetAccountId, amount }) =>
-        api.exchange(sourceAccountId, targetAccountId, amount).pipe(
-          map(() => OverviewActions.actionSucceeded({ accountId: sourceAccountId })),
+      mergeMap(({ sourceAccountCode, targetAccountCode, amount }) =>
+        api.exchange(sourceAccountCode, targetAccountCode, amount).pipe(
+          map(() => OverviewActions.actionSucceeded({ accountCode: sourceAccountCode })),
           catchError((error) => of(OverviewActions.actionFailed({ error: message(error) }))),
         ),
       ),
@@ -116,11 +116,11 @@ export const reloadAfterAction$ = createEffect(
   (actions$ = inject(Actions)) =>
     actions$.pipe(
       ofType(OverviewActions.actionSucceeded),
-      switchMap(({ accountId }) =>
+      switchMap(({ accountCode }) =>
         of(
-          OverviewActions.loadAccount({ accountId }),
-          OverviewActions.loadHistory({ accountId }),
-          OverviewActions.loadBalanceSeries({ accountId }),
+          OverviewActions.loadAccount({ accountCode }),
+          OverviewActions.loadHistory({ accountCode }),
+          OverviewActions.loadBalanceSeries({ accountCode }),
           AccountsActions.loadAccounts(),
         ),
       ),

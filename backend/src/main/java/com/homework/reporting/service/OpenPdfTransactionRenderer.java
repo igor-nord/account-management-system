@@ -41,8 +41,8 @@ public class OpenPdfTransactionRenderer {
         table.addCell("Currency");
         table.addCell("Description");
         for (AccountTransaction leg : legs) {
-            table.addCell(String.valueOf(leg.accountId()));
-            table.addCell(String.valueOf(leg.counterpartyAccountId()));
+            table.addCell(String.valueOf(leg.accountCode()));
+            table.addCell(String.valueOf(leg.counterpartyAccountCode()));
             table.addCell(leg.type().name());
             table.addCell(leg.amount().toPlainString());
             table.addCell(leg.currency().name());

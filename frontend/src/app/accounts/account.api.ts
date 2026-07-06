@@ -11,9 +11,9 @@ export class AccountApi {
     return this.http.get<AccountSummary[]>('/api/accounts');
   }
 
-  getAccount(accountId: number): Observable<AccountSummary> {
+  getAccount(accountCode: number): Observable<AccountSummary> {
     return this.http.get<AccountSummary>('/api/account', {
-      headers: { 'X-Account-Id': String(accountId) },
+      headers: { 'X-Account-Code': String(accountCode) },
     });
   }
 }

@@ -5,7 +5,7 @@ import com.homework.transaction.exception.InsufficientFundsException;
 import com.homework.account.domain.Account;
 import com.homework.account.domain.Currency;
 import com.homework.account.domain.LedgerCode;
-import com.homework.account.service.AccountAccessService;
+import com.homework.account.service.AccountService;
 import com.homework.transaction.domain.AccountTransaction;
 import com.homework.transaction.domain.TransactionType;
 import com.homework.transaction.integration.ExternalLoggingClient;
@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class DebitAccountServiceDefault implements DebitAccountService {
 
-    private final AccountAccessService accountAccess;
+    private final AccountService accountAccess;
     private final LedgerWriter ledger;
     private final TsidTransactionIdGenerator ids;
     private final ExternalLoggingClient externalLogging;
 
-    public DebitAccountServiceDefault(AccountAccessService accountAccess, LedgerWriter ledger, TsidTransactionIdGenerator ids,
+    public DebitAccountServiceDefault(AccountService accountAccess, LedgerWriter ledger, TsidTransactionIdGenerator ids,
                                ExternalLoggingClient externalLogging) {
         this.accountAccess = accountAccess;
         this.ledger = ledger;
@@ -33,27 +33,27 @@ public class DebitAccountServiceDefault implements DebitAccountService {
 
     @Transactional
     @Override
-    public List<AccountTransaction> debit(String username, Long accountId, BigDecimal amount, String description) {
-        Account customerAccount = accountAccess.requireOwned(username, accountId);
+    public List<AccountTransaction> debit(String username, Long accountCode, BigDecimal amount, String description) {
+        Account customerAccount = accountAccess.requireOwned(username, accountCode);
         verifyInputData(amount, customerAccount);
         Account external = accountAccess.ledgerAccount(LedgerCode.EXTERNAL, customerAccount.currency());
         String text = description == null || description.isBlank() ? "Withdrawal" : description;
         String txnId = ids.newTransactionId();
         externalLogging.logBeforeDebit(txnId);
         List<AccountTransaction> legs = List.of(
-                AccountTransaction.newLeg(txnId, customerAccount.accountId(), external.accountId(),
+                AccountTransaction.newLeg(txnId, customerAccount.accountCode(), external.accountCode(),
                         TransactionType.DEBIT, amount, customerAccount.currency(), text),
-                AccountTransaction.newLeg(txnId, external.accountId(), customerAccount.accountId(),
+                AccountTransaction.newLeg(txnId, external.accountCode(), customerAccount.accountCode(),
                         TransactionType.CREDIT, amount, customerAccount.currency(), text));
-        return ledger.visibleLegs(ledger.post(legs), Set.of(customerAccount.accountId()));
+        return ledger.visibleLegs(legs, Set.of(customerAccount.accountCode()));
     }
 
     private static void verifyInputData(BigDecimal amount, Account customerAccount) {
         if (customerAccount.currency() != Currency.EUR) {
-            throw new NonEuroDebitException(customerAccount.accountId(), customerAccount.currency());
+            throw new NonEuroDebitException(customerAccount.accountCode(), customerAccount.currency());
         }
         if (customerAccount.balance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException(customerAccount.accountId());
+            throw new InsufficientFundsException(customerAccount.accountCode());
         }
     }
 }

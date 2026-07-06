@@ -9,45 +9,45 @@
 
         <!-- FX_CLEARING ledger accounts (one per currency) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000001"/>
+            <column name="account_code" valueNumeric="1000001"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="FX_CLEARING"/>
+            <column name="ledger_code" value="FX_CLEARING"/>
             <column name="currency" value="EUR"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000002"/>
+            <column name="account_code" valueNumeric="1000002"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="FX_CLEARING"/>
+            <column name="ledger_code" value="FX_CLEARING"/>
             <column name="currency" value="USD"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000003"/>
+            <column name="account_code" valueNumeric="1000003"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="FX_CLEARING"/>
+            <column name="ledger_code" value="FX_CLEARING"/>
             <column name="currency" value="SEK"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000004"/>
+            <column name="account_code" valueNumeric="1000004"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="FX_CLEARING"/>
+            <column name="ledger_code" value="FX_CLEARING"/>
             <column name="currency" value="GBP"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000005"/>
+            <column name="account_code" valueNumeric="1000005"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="FX_CLEARING"/>
+            <column name="ledger_code" value="FX_CLEARING"/>
             <column name="currency" value="VND"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
@@ -56,45 +56,45 @@
 
         <!-- EXTERNAL ledger accounts (one per currency) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000006"/>
+            <column name="account_code" valueNumeric="1000006"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="EXTERNAL"/>
+            <column name="ledger_code" value="EXTERNAL"/>
             <column name="currency" value="EUR"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000007"/>
+            <column name="account_code" valueNumeric="1000007"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="EXTERNAL"/>
+            <column name="ledger_code" value="EXTERNAL"/>
             <column name="currency" value="USD"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000008"/>
+            <column name="account_code" valueNumeric="1000008"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="EXTERNAL"/>
+            <column name="ledger_code" value="EXTERNAL"/>
             <column name="currency" value="SEK"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000009"/>
+            <column name="account_code" valueNumeric="1000009"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="EXTERNAL"/>
+            <column name="ledger_code" value="EXTERNAL"/>
             <column name="currency" value="GBP"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000010"/>
+            <column name="account_code" valueNumeric="1000010"/>
             <column name="account_type" value="LEDGER"/>
-            <column name="code" value="EXTERNAL"/>
+            <column name="ledger_code" value="EXTERNAL"/>
             <column name="currency" value="VND"/>
             <column name="balance" valueNumeric="0"/>
             <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
@@ -103,7 +103,7 @@
 
         <!-- demo customer accounts (customer_id = 1) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000011"/>
+            <column name="account_code" valueNumeric="1000011"/>
             <column name="customer_id" valueNumeric="1"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="EUR"/>
@@ -112,7 +112,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000012"/>
+            <column name="account_code" valueNumeric="1000012"/>
             <column name="customer_id" valueNumeric="1"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="USD"/>
@@ -121,7 +121,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000013"/>
+            <column name="account_code" valueNumeric="1000013"/>
             <column name="customer_id" valueNumeric="1"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="SEK"/>
@@ -135,7 +135,7 @@
     <changeSet id="dml-002-account-seed-more" author="igor">
         <!-- alice customer accounts (customer_id = 2) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000021"/>
+            <column name="account_code" valueNumeric="1000021"/>
             <column name="customer_id" valueNumeric="2"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="EUR"/>
@@ -144,7 +144,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000022"/>
+            <column name="account_code" valueNumeric="1000022"/>
             <column name="customer_id" valueNumeric="2"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="GBP"/>
@@ -155,7 +155,7 @@
 
         <!-- bob customer accounts (customer_id = 3) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000031"/>
+            <column name="account_code" valueNumeric="1000031"/>
             <column name="customer_id" valueNumeric="3"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="EUR"/>
@@ -165,7 +165,7 @@
         </insert>
 
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000032"/>
+            <column name="account_code" valueNumeric="1000032"/>
             <column name="customer_id" valueNumeric="3"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="VND"/>
@@ -178,7 +178,7 @@
     <changeSet id="dml-002-account-seed-demo-history" author="igor">
         <!-- johndoe customer accounts (customer_id = 4) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000041"/>
+            <column name="account_code" valueNumeric="1000041"/>
             <column name="customer_id" valueNumeric="4"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="EUR"/>
@@ -187,7 +187,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000042"/>
+            <column name="account_code" valueNumeric="1000042"/>
             <column name="customer_id" valueNumeric="4"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="USD"/>
@@ -196,7 +196,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000043"/>
+            <column name="account_code" valueNumeric="1000043"/>
             <column name="customer_id" valueNumeric="4"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="GBP"/>
@@ -207,7 +207,7 @@
 
         <!-- janedoe customer accounts (customer_id = 5) -->
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000051"/>
+            <column name="account_code" valueNumeric="1000051"/>
             <column name="customer_id" valueNumeric="5"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="EUR"/>
@@ -216,7 +216,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000052"/>
+            <column name="account_code" valueNumeric="1000052"/>
             <column name="customer_id" valueNumeric="5"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="GBP"/>
@@ -225,7 +225,7 @@
             <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
         </insert>
         <insert tableName="account">
-            <column name="account_id" valueNumeric="1000053"/>
+            <column name="account_code" valueNumeric="1000053"/>
             <column name="customer_id" valueNumeric="5"/>
             <column name="account_type" value="CUSTOMER"/>
             <column name="currency" value="SEK"/>

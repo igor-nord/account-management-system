@@ -18,19 +18,19 @@ DESCS=(Salary Refund Groceries Rent ATM Bonus Utilities Transfer Dining Shopping
 
 post_credit() { # username account amount description
   curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE_URL/api/account/credit" \
-    -H "X-Username: $1" -H "X-Account-Id: $2" -H "Content-Type: application/json" \
+    -H "X-Username: $1" -H "X-Account-Code: $2" -H "Content-Type: application/json" \
     -d "{\"amount\":\"$3\",\"description\":\"$4\"}"
 }
 
 post_debit() { # username account amount description
   curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE_URL/api/account/debit" \
-    -H "X-Username: $1" -H "X-Account-Id: $2" -H "Content-Type: application/json" \
+    -H "X-Username: $1" -H "X-Account-Code: $2" -H "Content-Type: application/json" \
     -d "{\"amount\":\"$3\",\"description\":\"$4\"}"
 }
 
 post_exchange() { # username source target amount
   curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE_URL/api/exchange" \
-    -H "X-Username: $1" -H "X-Source-Account-Id: $2" -H "X-Target-Account-Id: $3" \
+    -H "X-Username: $1" -H "X-Source-Account-Code: $2" -H "X-Target-Account-Code: $3" \
     -H "Content-Type: application/json" -d "{\"amount\":\"$4\"}"
 }
 

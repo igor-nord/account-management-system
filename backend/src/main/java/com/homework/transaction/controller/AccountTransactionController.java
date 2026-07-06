@@ -24,17 +24,17 @@ class AccountTransactionController {
 
     @PostMapping("/credit")
     TransactionResponse credit(@CurrentUsername String username,
-                               @RequestHeader("X-Account-Id") Long accountId,
+                               @RequestHeader("X-Account-Code") Long accountCode,
                                @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                creditAccount.credit(username, accountId, request.amount(), request.description()));
+                creditAccount.credit(username, accountCode, request.amount(), request.description()));
     }
 
     @PostMapping("/debit")
     TransactionResponse debit(@CurrentUsername String username,
-                              @RequestHeader("X-Account-Id") Long accountId,
+                              @RequestHeader("X-Account-Code") Long accountCode,
                               @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                debitAccount.debit(username, accountId, request.amount(), request.description()));
+                debitAccount.debit(username, accountCode, request.amount(), request.description()));
     }
 }

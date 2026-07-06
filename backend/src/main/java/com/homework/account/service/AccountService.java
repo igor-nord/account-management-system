@@ -6,11 +6,11 @@ import com.homework.account.domain.LedgerCode;
 
 import java.util.List;
 
-public interface AccountAccessService {
+public interface AccountService {
 
     List<Account> ownedAccounts(String username);
 
-    Account requireOwned(String username, Long accountId);
+    Account requireOwned(String username, Long accountCode);
 
-    Account ledgerAccount(LedgerCode code, Currency currency);
+    Account ledgerAccount(LedgerCode ledgerCode, Currency currency);
 }

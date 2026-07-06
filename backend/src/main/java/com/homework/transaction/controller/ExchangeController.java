@@ -21,10 +21,10 @@ class ExchangeController {
 
     @PostMapping
     TransactionResponse exchange(@CurrentUsername String username,
-                                 @RequestHeader("X-Source-Account-Id") Long sourceAccountId,
-                                 @RequestHeader("X-Target-Account-Id") Long targetAccountId,
+                                 @RequestHeader("X-Source-Account-Code") Long sourceAccountCode,
+                                 @RequestHeader("X-Target-Account-Code") Long targetAccountCode,
                                  @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                exchange.exchange(username, sourceAccountId, targetAccountId, request.amount()));
+                exchange.exchange(username, sourceAccountCode, targetAccountCode, request.amount()));
     }
 }

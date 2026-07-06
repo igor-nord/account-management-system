@@ -29,9 +29,9 @@ import { customerFeature } from '../customer/customer.feature';
             <p>No accounts.</p>
           } @else {
             <ul>
-              @for (account of accounts(); track account.accountId) {
+              @for (account of accounts(); track account.accountCode) {
                 <li>
-                  <a [routerLink]="['/accounts', account.accountId]">
+                  <a [routerLink]="['/accounts', account.accountCode]">
                     {{ account.currency }} — {{ account.balance }}
                   </a>
                 </li>
