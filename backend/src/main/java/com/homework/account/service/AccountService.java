@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface AccountService {
 
-    List<Account> ownedAccounts(String username);
+    List<Account> getCustomerAccounts(String username);
 
-    Account requireOwned(String username, Long accountCode);
+    Account getCustomerAccount(String username, Long accountCode);
 
-    Account ledgerAccount(LedgerCode ledgerCode, Currency currency);
+    Account getLedgerAccountForCurrency(LedgerCode ledgerCode, Currency currency);
 }

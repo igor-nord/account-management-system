@@ -4,7 +4,7 @@ import com.homework.history.exception.InvalidCursorException;
 import com.homework.history.domain.HistoryCursor;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
 
@@ -20,12 +20,12 @@ final class CursorCodec {
 
     static HistoryCursor decode(String cursor) {
         try {
-            String raw = new String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8);
-            int sep = raw.lastIndexOf('|');
+            String rawCursor = new String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8);
+            int sep = rawCursor.lastIndexOf('|');
             if (sep < 0) {
                 throw new IllegalArgumentException("missing separator");
             }
-            return new HistoryCursor(Instant.parse(raw.substring(0, sep)), raw.substring(sep + 1));
+            return new HistoryCursor(LocalDateTime.parse(rawCursor.substring(0, sep)), rawCursor.substring(sep + 1));
         } catch (IllegalArgumentException | DateTimeParseException e) {
             throw new InvalidCursorException(cursor);
         }

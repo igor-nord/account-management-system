@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/exchange")
 class ExchangeController {
 
-    private final ExchangeService exchange;
+    private final ExchangeService exchangeService;
 
-    ExchangeController(ExchangeService exchange) {
-        this.exchange = exchange;
+    ExchangeController(ExchangeService exchangeService) {
+        this.exchangeService = exchangeService;
     }
 
     @PostMapping
@@ -25,6 +25,6 @@ class ExchangeController {
                                  @RequestHeader("X-Target-Account-Code") Long targetAccountCode,
                                  @Valid @RequestBody AmountRequest request) {
         return TransactionResponse.of(
-                exchange.exchange(username, sourceAccountCode, targetAccountCode, request.amount()));
+                exchangeService.exchange(username, sourceAccountCode, targetAccountCode, request.amount()));
     }
 }

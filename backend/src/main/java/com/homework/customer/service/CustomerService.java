@@ -4,5 +4,5 @@ import com.homework.customer.domain.Customer;
 
 public interface CustomerService {
 
-    Customer byUsername(String username);
+    Customer getCustomer(String username);
 }

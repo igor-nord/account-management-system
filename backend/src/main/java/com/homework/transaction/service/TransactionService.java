@@ -4,7 +4,7 @@ import com.homework.transaction.domain.AccountTransaction;
 
 import java.util.List;
 
-public interface GetTransactionService {
+public interface TransactionService {
 
-    List<AccountTransaction> byTransactionId(String username, String transactionId);
+    List<AccountTransaction> getTransaction(String username, String transactionId);
 }

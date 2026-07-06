@@ -1,11 +1,10 @@
 package com.homework.customer.repository;
 
 import com.homework.customer.domain.Customer;
-import org.springframework.stereotype.Component;
-
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class CustomerRepository {
 
     private final CustomerDao customerDao;
@@ -14,7 +13,7 @@ public class CustomerRepository {
         this.customerDao = customerDao;
     }
 
-    public Optional<Customer> findByUsername(String username) {
+    public Optional<Customer> getCustomer(String username) {
         return customerDao.findByUsername(username);
     }
 }

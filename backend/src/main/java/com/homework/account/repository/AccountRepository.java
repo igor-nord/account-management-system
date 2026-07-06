@@ -3,22 +3,18 @@ package com.homework.account.repository;
 import com.homework.account.domain.Account;
 import com.homework.account.domain.Currency;
 import com.homework.account.domain.LedgerCode;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class AccountRepository {
 
     private final AccountDao accountDao;
-    private final JdbcTemplate jdbcTemplate;
 
-    public AccountRepository(AccountDao accountDao, JdbcTemplate jdbcTemplate) {
+    public AccountRepository(AccountDao accountDao) {
         this.accountDao = accountDao;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     public Optional<Account> findByAccountCode(Long accountCode) {
@@ -38,13 +34,12 @@ public class AccountRepository {
     }
 
     public Account save(Account account) {
-        Instant now = Instant.now();
-        Long businessId = account.accountCode() != null ? account.accountCode() : nextAccountCode();
-        Instant createdAt = account.createdAt() != null ? account.createdAt() : now;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime createdAt = account.createdAt() != null ? account.createdAt() : now;
 
-        Account toSave = new Account(
+        Account accountEntity = new Account(
                 account.id(),
-                businessId,
+                account.accountCode(),
                 account.customerId(),
                 account.accountType(),
                 account.ledgerCode(),
@@ -53,10 +48,6 @@ public class AccountRepository {
                 createdAt,
                 now);
 
-        return accountDao.save(toSave);
-    }
-
-    private Long nextAccountCode() {
-        return jdbcTemplate.queryForObject("SELECT NEXT VALUE FOR account_code_seq", Long.class);
+        return accountDao.save(accountEntity);
     }
 }

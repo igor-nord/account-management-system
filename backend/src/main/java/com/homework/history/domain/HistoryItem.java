@@ -4,7 +4,7 @@ import com.homework.account.domain.Currency;
 import com.homework.transaction.domain.TransactionType;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record HistoryItem(
         String transactionId,
@@ -12,5 +12,5 @@ public record HistoryItem(
         BigDecimal amount,
         Currency currency,
         String description,
-        Instant createdAt) {
+        LocalDateTime createdAt) {
 }

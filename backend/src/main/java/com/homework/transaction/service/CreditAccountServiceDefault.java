@@ -5,31 +5,30 @@ import com.homework.account.domain.LedgerCode;
 import com.homework.account.service.AccountService;
 import com.homework.transaction.domain.AccountTransaction;
 import com.homework.transaction.domain.TransactionType;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class CreditAccountServiceDefault implements CreditAccountService {
 
-    private final AccountService accountAccess;
-    private final LedgerWriter ledger;
+    private final AccountService accountService;
+    private final LedgerHandlerService ledgerHandler;
     private final TsidTransactionIdGenerator trxIdGenerator;
 
-    public CreditAccountServiceDefault(AccountService accountAccess, LedgerWriter ledger, TsidTransactionIdGenerator trxIdGenerator) {
-        this.accountAccess = accountAccess;
-        this.ledger = ledger;
+    public CreditAccountServiceDefault(AccountService accountService, LedgerHandlerService ledgerHandler, TsidTransactionIdGenerator trxIdGenerator) {
+        this.accountService = accountService;
+        this.ledgerHandler = ledgerHandler;
         this.trxIdGenerator = trxIdGenerator;
     }
 
     @Transactional
     @Override
     public List<AccountTransaction> credit(String username, Long accountCode, BigDecimal amount, String description) {
-        Account customer = accountAccess.requireOwned(username, accountCode);
-        Account external = accountAccess.ledgerAccount(LedgerCode.EXTERNAL, customer.currency());
+        Account customer = accountService.getCustomerAccount(username, accountCode);
+        Account external = accountService.getLedgerAccountForCurrency(LedgerCode.EXTERNAL, customer.currency());
         String text = description == null || description.isBlank() ? "Deposit" : description;
         String txnId = trxIdGenerator.newTransactionId();
         List<AccountTransaction> legs = List.of(
@@ -37,6 +36,6 @@ public class CreditAccountServiceDefault implements CreditAccountService {
                         TransactionType.CREDIT, amount, customer.currency(), text),
                 AccountTransaction.newLeg(txnId, external.accountCode(), customer.accountCode(),
                         TransactionType.DEBIT, amount, customer.currency(), text));
-        return ledger.visibleLegs(legs, Set.of(customer.accountCode()));
+        return ledgerHandler.handleAllTxLegs(legs, Set.of(customer.accountCode()));
     }
 }

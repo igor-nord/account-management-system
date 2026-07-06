@@ -1,7 +1,7 @@
 package com.homework.reporting.controller;
 
 import com.homework.common.web.CurrentUsername;
-import com.homework.reporting.service.ExportTransactionPdfService;
+import com.homework.reporting.service.PdfService;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/transaction")
 class ReportController {
 
-    private final ExportTransactionPdfService exportPdf;
+    private final PdfService pdfService;
 
-    ReportController(ExportTransactionPdfService exportPdf) {
-        this.exportPdf = exportPdf;
+    ReportController(PdfService pdfService) {
+        this.pdfService = pdfService;
     }
 
     @GetMapping("/pdf")
-    ResponseEntity<byte[]> pdf(@CurrentUsername String username,
-                               @RequestHeader("X-Transaction-Id") String transactionId) {
-        byte[] pdf = exportPdf.export(username, transactionId);
+    ResponseEntity<byte[]> generatePdfForTransaction(
+        @CurrentUsername String username,
+        @RequestHeader("X-Transaction-Id") String transactionId) {
+
+        byte[] pdf = pdfService.createPdfForTransaction(username, transactionId);
         ContentDisposition disposition = ContentDisposition.attachment()
                 .filename("transaction-" + transactionId + ".pdf").build();
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header("Content-Disposition", disposition.toString())

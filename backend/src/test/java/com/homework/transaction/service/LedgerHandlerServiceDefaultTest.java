@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
-class LedgerWriterTest {
+class LedgerHandlerServiceDefaultTest {
 
     @Autowired
-    private LedgerWriter ledgerWriter;
+    private LedgerHandlerService ledgerHandler;
     @Autowired
     private AccountRepository accounts;
 
@@ -34,7 +34,7 @@ class LedgerWriterTest {
                 AccountTransaction.newLeg("TXN0000000010", 1000006L, 1000011L, TransactionType.DEBIT,
                         new BigDecimal("50.00"), Currency.EUR, "deposit"));
 
-        List<AccountTransaction> visible = ledgerWriter.visibleLegs(legs, Set.of(1000011L));
+        List<AccountTransaction> visible = ledgerHandler.handleAllTxLegs(legs, Set.of(1000011L));
 
         assertEquals(before.add(new BigDecimal("50.00")), accounts.findByAccountCode(1000011L).orElseThrow().balance());
         assertEquals(1, visible.size());
@@ -46,6 +46,6 @@ class LedgerWriterTest {
         List<AccountTransaction> legs = List.of(
                 AccountTransaction.newLeg("TXN0000000011", 1000011L, 1000006L, TransactionType.CREDIT,
                         new BigDecimal("50.00"), Currency.EUR, "bad"));
-        assertThrows(IllegalStateException.class, () -> ledgerWriter.visibleLegs(legs, Set.of(1000011L)));
+        assertThrows(IllegalStateException.class, () -> ledgerHandler.handleAllTxLegs(legs, Set.of(1000011L)));
     }
 }

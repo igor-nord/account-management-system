@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Table("account_transaction")
 public record AccountTransaction(
@@ -17,7 +17,7 @@ public record AccountTransaction(
         BigDecimal amount,
         Currency currency,
         String description,
-        Instant createdAt) {
+        LocalDateTime createdAt) {
 
     public static AccountTransaction newLeg(String transactionId, Long accountCode, Long counterpartyAccountCode,
                                             TransactionType type, BigDecimal amount, Currency currency,

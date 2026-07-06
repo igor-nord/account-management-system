@@ -1,37 +1,40 @@
 package com.homework.transaction.service;
 
-import com.homework.transaction.exception.TransactionNotFoundException;
 import com.homework.account.domain.Account;
 import com.homework.account.service.AccountService;
 import com.homework.transaction.domain.AccountTransaction;
+import com.homework.transaction.exception.TransactionNotFoundException;
 import com.homework.transaction.repository.TransactionRepository;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
-@Component
-public class GetTransactionServiceDefault implements GetTransactionService {
+@Service
+public class TransactionServiceDefault implements TransactionService {
 
     private final TransactionRepository transactions;
-    private final AccountService accountAccess;
+    private final AccountService accountService;
 
-    public GetTransactionServiceDefault(TransactionRepository transactions, AccountService accountAccess) {
+    public TransactionServiceDefault(TransactionRepository transactions, AccountService accountService) {
         this.transactions = transactions;
-        this.accountAccess = accountAccess;
+        this.accountService = accountService;
     }
 
     @Override
-    public List<AccountTransaction> byTransactionId(String username, String transactionId) {
+    public List<AccountTransaction> getTransaction(String username, String transactionId) {
         List<AccountTransaction> legs = transactions.findByTransactionId(transactionId);
         if (legs.isEmpty()) {
             throw new TransactionNotFoundException(transactionId);
         }
-        Set<Long> owned = accountAccess.ownedAccounts(username).stream()
-                .map(Account::accountCode).collect(Collectors.toSet());
+        Set<Long> customerAccountCodes =
+            accountService.getCustomerAccounts(username)
+                .stream()
+                .map(Account::accountCode)
+                .collect(Collectors.toSet());
+
         List<AccountTransaction> visible = legs.stream()
-                .filter(leg -> owned.contains(leg.accountCode())).toList();
+                .filter(leg -> customerAccountCodes.contains(leg.accountCode())).toList();
         if (visible.isEmpty()) {
             throw new TransactionNotFoundException(transactionId);
         }

@@ -29,7 +29,7 @@ class ReportControllerTest {
     }
 
     @Test
-    void downloadsTransactionPdf() throws Exception {
+    void downloadsTransactionGeneratePdfForTransaction() throws Exception {
         String body = mockMvc().perform(post("/api/account/credit")
                         .header("X-Username", "demo").header("X-Account-Code", "1000011")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"25.00\"}"))

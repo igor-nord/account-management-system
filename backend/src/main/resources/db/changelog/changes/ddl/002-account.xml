@@ -16,10 +16,10 @@
 
     <changeSet id="ddl-002-account-table" author="igor">
         <createTable tableName="account">
-            <column name="id" type="BIGINT" autoIncrement="true" startWith="1001000">
+            <column name="id" type="BIGINT" autoIncrement="true" startWith="1000">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="account_code" type="BIGINT">
+            <column name="account_code" type="BIGINT" defaultValueSequenceNext="account_code_seq">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="customer_id" type="BIGINT">
@@ -31,7 +31,9 @@
             <column name="account_type" type="VARCHAR(8)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ledger_code" type="VARCHAR(20)"/>
+            <column name="ledger_code" type="VARCHAR(20)">
+              <constraints nullable="true"/>
+            </column>
             <column name="currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
@@ -53,6 +55,12 @@
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_type CHECK (account_type IN ('CUSTOMER','LEDGER'))</sql>
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_currency CHECK (currency IN ('EUR','USD','SEK','GBP','VND'))</sql>
         <sql>ALTER TABLE account ADD CONSTRAINT chk_account_ledger_code CHECK (ledger_code IS NULL OR ledger_code IN ('FX_CLEARING','EXTERNAL'))</sql>
+    </changeSet>
+
+    <changeSet id="ddl-002-account-type-ownership" author="igor">
+        <sql>ALTER TABLE account ADD CONSTRAINT chk_account_type_ownership CHECK (
+            (account_type = 'CUSTOMER' AND customer_id IS NOT NULL AND ledger_code IS NULL)
+            OR (account_type = 'LEDGER' AND customer_id IS NULL AND ledger_code IS NOT NULL))</sql>
     </changeSet>
 
 </databaseChangeLog>

@@ -2,10 +2,10 @@ package com.homework.transaction.controller;
 
 import com.homework.transaction.domain.AccountTransaction;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public record TransactionResponse(String transactionId, Instant createdAt, List<TransactionLeg> legs) {
+public record TransactionResponse(String transactionId, LocalDateTime createdAt, List<TransactionLeg> legs) {
 
     public static TransactionResponse of(List<AccountTransaction> legs) {
         AccountTransaction first = legs.getFirst();

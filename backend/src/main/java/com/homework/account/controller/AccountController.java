@@ -20,13 +20,13 @@ class AccountController {
     }
 
     @GetMapping("/accounts")
-    List<AccountSummary> list(@CurrentUsername String username) {
-        return accountService.ownedAccounts(username).stream().map(AccountSummary::of).toList();
+    List<AccountSummary> getCustomerAccountSummaries(@CurrentUsername String username) {
+        return accountService.getCustomerAccounts(username).stream().map(AccountSummary::of).toList();
     }
 
     @GetMapping("/account")
-    AccountSummary get(@CurrentUsername String username,
+    AccountSummary getCustomerAccountSummary(@CurrentUsername String username,
                        @RequestHeader("X-Account-Code") Long accountCode) {
-        return AccountSummary.of(accountService.requireOwned(username, accountCode));
+        return AccountSummary.of(accountService.getCustomerAccount(username, accountCode));
     }
 }

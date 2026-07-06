@@ -56,7 +56,7 @@ class HistoryControllerTest {
     }
 
     @Test
-    void balanceSeriesEndsAtCurrentBalance() throws Exception {
+    void balanceSeriesEndsAtCurrentGetBalance() throws Exception {
         credit("10.00");
         credit("50.00");
 

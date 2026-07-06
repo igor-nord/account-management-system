@@ -19,8 +19,9 @@ interface AccountDao extends CrudRepository<Account, Long> {
             JOIN customer c ON a.customer_id = c.id
             WHERE a.account_code = :accountCode AND c.username = :username
             """)
-    Optional<Account> findByAccountCodeAndCustomerUsername(@Param("accountCode") Long accountCode,
-                                                         @Param("username") String username);
+    Optional<Account> findByAccountCodeAndCustomerUsername(
+        @Param("accountCode") Long accountCode,
+        @Param("username") String username);
 
     @Query("""
             SELECT a.* FROM account a

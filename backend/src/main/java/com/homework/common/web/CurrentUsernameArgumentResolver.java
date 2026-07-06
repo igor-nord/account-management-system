@@ -34,6 +34,6 @@ public class CurrentUsernameArgumentResolver implements HandlerMethodArgumentRes
         if (username == null || username.isBlank()) {
             throw new MissingRequestHeaderException(USERNAME_HEADER, parameter);
         }
-        return findCustomer.byUsername(username).username();
+        return findCustomer.getCustomer(username).username();
     }
 }

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.homework.history.domain.BalancePoint;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record BalanceSnapshot(
-        Instant time,
+        LocalDateTime time,
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal balance) {
 
     public static BalanceSnapshot of(BalancePoint point) {

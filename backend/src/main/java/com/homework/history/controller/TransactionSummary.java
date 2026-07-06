@@ -6,7 +6,7 @@ import com.homework.history.domain.HistoryItem;
 import com.homework.transaction.domain.TransactionType;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record TransactionSummary(
         String transactionId,
@@ -14,7 +14,7 @@ public record TransactionSummary(
         @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal amount,
         Currency currency,
         String description,
-        Instant createdAt) {
+        LocalDateTime createdAt) {
 
     public static TransactionSummary of(HistoryItem item) {
         return new TransactionSummary(item.transactionId(), item.type(), item.amount(),

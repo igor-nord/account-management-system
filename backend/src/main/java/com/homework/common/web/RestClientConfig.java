@@ -1,5 +1,6 @@
-package com.homework.transaction.integration;
+package com.homework.common.web;
 
+import com.homework.transaction.integration.ExternalLoggingProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

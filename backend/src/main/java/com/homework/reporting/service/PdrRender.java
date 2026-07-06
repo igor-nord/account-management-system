@@ -9,13 +9,13 @@ import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-public class OpenPdfTransactionRenderer {
+public class PdrRender {
 
-    public byte[] render(String transactionId, Instant createdAt, List<AccountTransaction> legs) {
+    public byte[] render(String transactionId, LocalDateTime createdAt, List<AccountTransaction> legs) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document();
         try {

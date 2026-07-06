@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/customer")
 class CustomerController {
 
-    private final CustomerService findCustomer;
+    private final CustomerService customerService;
 
-    CustomerController(CustomerService findCustomer) {
-        this.findCustomer = findCustomer;
+    CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping
-    CustomerResponse current(@CurrentUsername String username) {
-        return new CustomerResponse(findCustomer.byUsername(username).username());
+    CustomerResponse getCustomer(@CurrentUsername String username) {
+        return new CustomerResponse(customerService.getCustomer(username).username());
     }
 }

@@ -6,21 +6,21 @@ import com.homework.transaction.domain.TransactionType;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class OpenPdfTransactionRendererTest {
+class PdrRenderTest {
 
-    private final OpenPdfTransactionRenderer renderer = new OpenPdfTransactionRenderer();
+    private final PdrRender renderer = new PdrRender();
 
     @Test
     void rendersPdfBytesStartingWithMagicHeader() {
         AccountTransaction leg = AccountTransaction.newLeg("TXN0000000001", 1000011L, 1000006L,
                 TransactionType.CREDIT, new BigDecimal("25.00"), Currency.EUR, "Deposit");
 
-        byte[] pdf = renderer.render("TXN0000000001", Instant.now(), List.of(leg));
+        byte[] pdf = renderer.render("TXN0000000001", LocalDateTime.now(), List.of(leg));
 
         assertTrue(pdf.length > 0);
         assertTrue(pdf[0] == '%' && pdf[1] == 'P' && pdf[2] == 'D' && pdf[3] == 'F',

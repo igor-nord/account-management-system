@@ -1,13 +1,12 @@
 package com.homework.transaction.repository;
 
 import com.homework.transaction.domain.AccountTransaction;
-import org.springframework.stereotype.Component;
-
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class TransactionRepository {
 
     private final AccountTransactionDao accountTransactionDao;
@@ -16,13 +15,9 @@ public class TransactionRepository {
         this.accountTransactionDao = accountTransactionDao;
     }
 
-    public AccountTransaction save(AccountTransaction transaction) {
-        return accountTransactionDao.save(withCreatedAt(transaction, Instant.now()));
-    }
-
     public List<AccountTransaction> saveAll(List<AccountTransaction> legs) {
-        Instant now = Instant.now();
-        List<AccountTransaction> stamped = legs.stream().map(leg -> withCreatedAt(leg, now)).toList();
+        LocalDateTime currentTime = LocalDateTime.now();
+        List<AccountTransaction> stamped = legs.stream().map(leg -> withCreatedAt(leg, currentTime)).toList();
         List<AccountTransaction> result = new ArrayList<>();
         accountTransactionDao.saveAll(stamped).forEach(result::add);
         return result;
@@ -36,7 +31,7 @@ public class TransactionRepository {
         return accountTransactionDao.findByTransactionIdOrderByIdAsc(transactionId);
     }
 
-    private static AccountTransaction withCreatedAt(AccountTransaction transaction, Instant fallback) {
+    private static AccountTransaction withCreatedAt(AccountTransaction transaction, LocalDateTime fallback) {
         if (transaction.createdAt() != null) {
             return transaction;
         }
