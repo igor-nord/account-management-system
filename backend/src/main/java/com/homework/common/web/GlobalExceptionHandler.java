@@ -1,13 +1,13 @@
 package com.homework.common.web;
 
-import com.homework.account.usecase.AccountNotFoundException;
-import com.homework.customer.usecase.CustomerNotFoundException;
-import com.homework.history.infrastructure.controller.InvalidCursorException;
-import com.homework.transaction.port.ExternalLoggingException;
-import com.homework.transaction.usecase.InsufficientFundsException;
-import com.homework.transaction.usecase.NonEuroDebitException;
-import com.homework.transaction.usecase.SameAccountExchangeException;
-import com.homework.transaction.usecase.TransactionNotFoundException;
+import com.homework.account.exception.AccountNotFoundException;
+import com.homework.customer.exception.CustomerNotFoundException;
+import com.homework.history.exception.InvalidCursorException;
+import com.homework.transaction.exception.ExternalLoggingException;
+import com.homework.transaction.exception.InsufficientFundsException;
+import com.homework.transaction.exception.NonEuroDebitException;
+import com.homework.transaction.exception.SameAccountExchangeException;
+import com.homework.transaction.exception.TransactionNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

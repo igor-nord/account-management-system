@@ -1,6 +1,6 @@
 package com.homework.common.web;
 
-import com.homework.customer.usecase.FindCustomer;
+import com.homework.customer.service.CustomerService;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -14,9 +14,9 @@ public class CurrentUsernameArgumentResolver implements HandlerMethodArgumentRes
 
     private static final String USERNAME_HEADER = "X-Username";
 
-    private final FindCustomer findCustomer;
+    private final CustomerService findCustomer;
 
-    public CurrentUsernameArgumentResolver(FindCustomer findCustomer) {
+    public CurrentUsernameArgumentResolver(CustomerService findCustomer) {
         this.findCustomer = findCustomer;
     }
 

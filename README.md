@@ -111,41 +111,47 @@ Notes on our interpretation:
 ## High-level architecture
 
 A **modular monolith** designed so any feature could later be extracted into its own
-service. Two complementary structures:
+service. Two structuring choices:
 
 - **Package-by-feature** at the top level — code is grouped by business domain, not by
   technical layer: `com.homework.{account, customer, transaction, exchange, reporting, history}`.
   Each feature is self-contained.
-- **Hexagonal (Ports & Adapters)** *inside* each feature — a pure domain core
-  surrounded by ports and infrastructure adapters, so business logic is independent of
-  the framework, the database, and external services.
+- **Classic layered architecture** *inside* each feature — a **controller → service →
+  repository** call chain over a shared **domain**, with a separate **integration** layer
+  for outbound calls to external systems.
 
-### The four packages inside a feature
+### The layers inside a feature
 
-Dependencies point strictly inward
-(`infrastructure` → `usecase` → `port` → `domain`; the domain depends on nothing):
+Dependencies point inward toward the domain
+(`controller` → `service` → `repository` / `integration` → `domain`):
 
-- **`domain`** — only aggregates/entities and enums (`Account`, `AccountTransaction`,
-  `Currency`, `AccountType`, `LedgerCode`, `TransactionType`). No interfaces, no
-  framework code.
-- **`port`** — **all interfaces**: input ports (use cases, e.g. `DebitAccountUseCase`),
-  repository output ports (`AccountRepository`, `TransactionRepository`), and technical
-  output ports (`TransactionIdGenerator`, `ExternalLoggingPort`,
-  `TransactionPdfRenderer`). Keeping the interfaces in this inner package is what
-  preserves dependency inversion.
-- **`usecase`** — the application business logic: services that implement the input
-  ports (credit, debit, exchange, history, PDF export) and orchestrate the domain
-  through the ports. No framework code.
-- **`infrastructure`** — the **adapters** that implement the output ports, and the input
-  adapters that call the use cases, in sub-packages by technology:
-  - `controller` — Spring MVC REST controllers + request/response DTOs (input adapters).
-    Controllers call use-case input ports; they do **not** implement ports.
-  - `repository` — Spring Data JDBC persistence adapters over the repository ports.
-  - `external` / `pdf` / `id` — outbound HTTP (`HttpExternalLoggingAdapter` over
-    RestClient), PDF rendering (`OpenPdfTransactionRenderer`), TSID generation.
+- **`domain`** — the aggregates/entities and enums (`Account`, `AccountTransaction`,
+  `Currency`, `AccountType`, `LedgerCode`, `TransactionType`). Plain objects that double
+  as the Spring Data JDBC entities; no framework logic.
+- **`controller`** — Spring MVC REST controllers + request/response DTOs (the
+  presentation layer). Controllers convert DTOs ↔ domain and call services.
+- **`service`** — the application/business logic: credit, debit, exchange, history, and
+  PDF export, plus supporting/technical collaborators (`AccountAccess`, `FindCustomer`,
+  `LedgerWriter`, `TsidTransactionIdGenerator`, `OpenPdfTransactionRenderer`,
+  `ExchangeRateService`/`ExchangeRateServiceMock`). No web or persistence concerns leak
+  in.
+- **`repository`** — Spring Data JDBC persistence: a Spring Data `CrudRepository` DAO
+  (`AccountDao`) wrapped by a `@Component` repository class (`AccountRepository`) that
+  holds the real persistence logic (business-id sequences, timestamps, and the
+  running-balance window query).
+- **`integration`** — adapters for outbound calls to **external systems**: the
+  `ExternalLoggingClient` (RestClient call to the status endpoint) and its config. Only
+  features that talk to the outside world carry this package.
+- **`exception`** — the feature's own exception types (`AccountNotFoundException`,
+  `InsufficientFundsException`, `ExternalLoggingException`, …), collected in one place and
+  mapped to HTTP responses by the shared `common/web/GlobalExceptionHandler`.
 
-This is what lets a feature be tested without a database or web server, and later
-extracted into its own service.
+Collaborators are **concrete classes** (not ports-and-adapters interfaces) — the one
+interface kept is `ExchangeRateService`, because the assignment calls for an interface
+with an `ExchangeRateServiceMock` implementation. Not every feature has every layer — a
+feature carries only the packages it needs (e.g. `exchange` is just `service`;
+`reporting` is `controller` + `service`). This keeps a feature testable in isolation and
+later extractable into its own service.
 
 ---
 
@@ -162,13 +168,14 @@ rejected as boilerplate that buys little on this stack.
 
 The separations we *do* keep are the ones that pay off:
 
-- **Repository output-port interfaces** live in each feature's `port` package,
-  implemented by a **thin `infrastructure` adapter** that wraps the Spring Data
-  `CrudRepository` and holds the only real persistence logic (business-id sequence
-  assignment, timestamps).
-- **Request/response DTOs** live at the **web boundary** and are converted in the
-  **controller** (presentation layer) — never in the use case, which speaks only domain.
-  This decouples the API contract from the internal model.
+- **Persistence lives in the `repository` layer**: a thin `@Component` repository class
+  wraps the Spring Data `CrudRepository` and holds the only real persistence logic
+  (business-id sequence assignment, timestamps). Services depend on that concrete
+  repository directly — no separate port interface, since a single implementation gains
+  nothing from the indirection.
+- **Request/response DTOs** live at the **web boundary** (the `controller` layer) and are
+  converted there — never in the service, which speaks only domain. This decouples the
+  API contract from the internal model.
 
 ### Why Spring Data JDBC (not JPA)
 
@@ -277,7 +284,7 @@ identifier travel in **request headers**, not the URL: `X-Username` (the custome
 customer is identified by **username end-to-end** — the technical primary key is never
 the application-level identity: a `HandlerMethodArgumentResolver` validates `X-Username`
 (`404` if the username is unknown, `400` if the header is missing) and injects the
-**username** into controllers, which thread it through the use cases. The customer PK
+**username** into controllers, which thread it through the services. The customer PK
 exists only as the `account.customer_id` foreign key inside the database (the account
 lookup joins `customer` on `username`); it never appears in the app layer or any DTO.
 Request bodies carry
@@ -341,7 +348,7 @@ forwards `/api` → `:8080` (no CORS).
   scattered in source.
 - **H2 identifiers** — datasource URLs set `CASE_INSENSITIVE_IDENTIFIERS=TRUE` so
   Liquibase-created (uppercase) tables match Spring Data JDBC's quoted identifiers.
-- **Web DTO naming** — DTOs live in each feature's `infrastructure/controller`:
+- **Web DTO naming** — DTOs live in each feature's `controller` layer:
   - a **full response body** a controller returns → **`...Response`**
     (`TransactionResponse`, `HistoryPageResponse`, `BalanceSeriesResponse`);
   - a **full request body** (`@RequestBody`) → **`...Request`** (`AmountRequest`);
@@ -450,7 +457,7 @@ npx ng test --watch=false # Vitest
 
 ```
 homework_1/
-├── backend/     Spring Boot 4 app (Gradle) — package-by-feature + hexagonal
+├── backend/     Spring Boot 4 app (Gradle) — package-by-feature + layered
 ├── frontend/    Angular 21 SPA (standalone, NgRx, Chart.js)
 ├── scripts/     generate-demo-transactions.sh — drives the API to populate demo history
 └── README.md    this file
