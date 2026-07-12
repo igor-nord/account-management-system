@@ -130,15 +130,21 @@ Dependencies point inward toward the domain
   as the Spring Data JDBC entities; no framework logic.
 - **`controller`** — Spring MVC REST controllers + request/response DTOs (the
   presentation layer). Controllers convert DTOs ↔ domain and call services.
-- **`service`** — the application/business logic: credit, debit, exchange, history, and
-  PDF export, plus supporting/technical collaborators (`AccountAccess`, `FindCustomer`,
-  `LedgerWriter`, `TsidTransactionIdGenerator`, `OpenPdfTransactionRenderer`,
-  `ExchangeRateService`/`ExchangeRateServiceMock`). No web or persistence concerns leak
-  in.
+- **`service`** — the application/business logic, each exposed as an **interface with a
+  single `…Default` implementation**: `CreditAccountService`, `DebitAccountService`,
+  `ExchangeService`, and `TransactionService` (credit, debit, exchange, read), plus
+  `AccountService` and `CustomerService` (account access and username lookup),
+  `TransactionHistoryService` / `BalanceSeriesService` (history), and `PdfService` (PDF
+  export). Supporting/technical collaborators: `LedgerHandlerService`,
+  `TsidTransactionIdGenerator`, `PdrRender` (the OpenPDF renderer), and
+  `CurrencyExchangeService` / `CurrencyExchangeServiceMock`. No web or persistence
+  concerns leak in.
 - **`repository`** — Spring Data JDBC persistence: a Spring Data `CrudRepository` DAO
-  (`AccountDao`) wrapped by a `@Component` repository class (`AccountRepository`) that
-  holds the real persistence logic (business-id sequences, timestamps, and the
-  running-balance window query).
+  (`AccountDao`) wrapped by a `@Repository` class (`AccountRepository`) that holds the
+  real persistence logic (business-id sequences, timestamps, and the running-balance
+  window query). Most features expose this as one concrete class; `history` splits it
+  into an `AccountHistoryRepository` interface + `AccountHistoryRepositoryDefault`, since
+  its hand-written window query is worth mocking in isolation.
 - **`integration`** — adapters for outbound calls to **external systems**: the
   `ExternalLoggingClient` (RestClient call to the status endpoint) and its config. Only
   features that talk to the outside world carry this package.
@@ -146,12 +152,15 @@ Dependencies point inward toward the domain
   `InsufficientFundsException`, `ExternalLoggingException`, …), collected in one place and
   mapped to HTTP responses by the shared `common/web/GlobalExceptionHandler`.
 
-Collaborators are **concrete classes** (not ports-and-adapters interfaces) — the one
-interface kept is `ExchangeRateService`, because the assignment calls for an interface
-with an `ExchangeRateServiceMock` implementation. Not every feature has every layer — a
-feature carries only the packages it needs (e.g. `exchange` is just `service`;
-`reporting` is `controller` + `service`). This keeps a feature testable in isolation and
-later extractable into its own service.
+Each service is an **interface with a single `…Default` implementation**, so callers
+depend on the abstraction and every feature stays mockable in isolation — the assignment
+explicitly calls for this on exchange (`CurrencyExchangeService` with a
+`CurrencyExchangeServiceMock`). Repositories are the exception: outside `history` they
+are plain concrete `@Repository` classes, since a single persistence implementation gains
+nothing from the indirection. Not every feature has every layer — a feature carries only
+the packages it needs (e.g. `exchange` is just `service`; `reporting` is `controller` +
+`service`). This keeps a feature testable in isolation and later extractable into its own
+service.
 
 ---
 
@@ -168,11 +177,11 @@ rejected as boilerplate that buys little on this stack.
 
 The separations we *do* keep are the ones that pay off:
 
-- **Persistence lives in the `repository` layer**: a thin `@Component` repository class
-  wraps the Spring Data `CrudRepository` and holds the only real persistence logic
-  (business-id sequence assignment, timestamps). Services depend on that concrete
-  repository directly — no separate port interface, since a single implementation gains
-  nothing from the indirection.
+- **Persistence lives in the `repository` layer**: a thin `@Repository` class wraps the
+  Spring Data `CrudRepository` and holds the only real persistence logic (business-id
+  sequence assignment, timestamps). Services depend on that repository directly; only
+  `history` puts an interface in front of it (its window query is worth mocking), while a
+  single-implementation repository elsewhere gains nothing from the indirection.
 - **Request/response DTOs** live at the **web boundary** (the `controller` layer) and are
   converted there — never in the service, which speaks only domain. This decouples the
   API contract from the internal model.
@@ -208,7 +217,7 @@ concurrency answer rather than going reactive.
   and nothing is committed (so debit and exchange require that endpoint to be
   reachable).
 - **Currency exchange** moves money between two of the customer's accounts using
-  **fixed rates** (`ExchangeRateService` / `ExchangeRateServiceMock`; see below).
+  **fixed rates** (`CurrencyExchangeService` / `CurrencyExchangeServiceMock`; see below).
 - **Ownership** is enforced: an account or transaction not owned by the current customer
   returns **`404`** (never leaks existence).
 - Amounts are positive magnitudes in `DECIMAL(19,2)` / `BigDecimal` — never floating
@@ -219,10 +228,13 @@ concurrency answer rather than going reactive.
 Every financial operation writes a set of **balanced rows** to `account_transaction`,
 grouped by one `transaction_id`, such that **each currency independently sums to zero**.
 
-- **Accounts** are of two kinds (`account_type`):
-  - `CUSTOMER` — a customer wallet, exactly one currency.
+- **Accounts** are of two kinds (`account_type`), and the two identities are mutually
+  exclusive (enforced by a DB `CHECK`, see [Data integrity](#data-integrity)):
+  - `CUSTOMER` — a customer wallet, exactly one currency: `customer_id` set, `ledger_code`
+    null.
   - `LEDGER` — a system account addressed by a role `ledger_code` (`LedgerCode`:
-    `FX_CLEARING`, `EXTERNAL`), one per currency, with no owning customer.
+    `FX_CLEARING`, `EXTERNAL`), one per currency, with no owning customer: `ledger_code`
+    set, `customer_id` null.
 - **Credit / debit** = **2 rows**, routed through the `EXTERNAL` ledger account of that
   currency.
 - **Exchange** = **4 rows**, routed through the two `FX_CLEARING` accounts (source and
@@ -234,7 +246,7 @@ grouped by one `transaction_id`, such that **each currency independently sums to
 
 ### Fixed exchange rates
 
-Rates are anchored to EUR (`ExchangeRateServiceMock`). A cross-rate is `to ÷ from`,
+Rates are anchored to EUR (`CurrencyExchangeServiceMock`). A cross-rate is `to ÷ from`,
 applied to the source amount and rounded HALF_UP to 2 decimals:
 
 | Currency | Units per 1 EUR |
@@ -257,8 +269,10 @@ applied to the source amount and rounded HALF_UP to 2 decimals:
 
 Closed value sets are enforced both in code (enums `Currency`, `AccountType`,
 `LedgerCode`) and in the database (`CHECK` constraints on `currency`, `account_type`,
-`ledger_code`). Money is encoded as **strings** in JSON to protect `DECIMAL(19,2)` precision
-from JavaScript floats.
+`ledger_code`). A further `CHECK` ties `account_type` to its identity columns — a
+`CUSTOMER` row must have a `customer_id` and no `ledger_code`, a `LEDGER` row the reverse
+— so the two account kinds can never be mixed. Money is encoded as **strings** in JSON to
+protect `DECIMAL(19,2)` precision from JavaScript floats.
 
 ### Seeded demo data
 
@@ -469,9 +483,23 @@ Enhancements beyond the assignment's scope:
 
 | Item | Notes |
 |------|-------|
-| Resilient external-logging call | Wrap the pre-debit call in a **retry with exponential backoff** (e.g. Spring Retry / Resilience4j). Today it is a single fail-closed attempt, so a transient outage of the status endpoint blocks debit and exchange. |
+| Retry & circuit breaker for external logging | Wrap the pre-debit call in `ExternalLoggingClient` with a **retry (exponential backoff)** and a **circuit breaker** that trips after N unsuccessful attempts (e.g. Spring Retry / Resilience4j). Today it is a single fail-closed attempt, so a transient outage of the status endpoint blocks every debit and exchange. |
+| Move the external call out of the DB transaction | In `ExchangeServiceDefault` (and the debit path) the RestClient call runs **inside** `@Transactional`, so a slow status endpoint holds a DB connection and row locks open for the whole HTTP round-trip. Validate and log **before** opening the transaction, keeping the transactional scope to the ledger writes only. |
+| Concurrency safety on balance updates | `LedgerHandlerServiceDefault.applyToBalance` does a read-modify-write on `account.balance`, so two concurrent debits/exchanges can lost-update each other. Guard it with **optimistic locking** (`@Version` on `Account`, callers retry on failure) or an **atomic `UPDATE account SET balance = balance + :delta WHERE account_code = :code`** (which can also enforce a non-negative balance in SQL). |
+| Request validation at the controller layer | Validate incoming request bodies/params in the web layer (Bean Validation — `@Valid`, `@Positive`, `@NotNull`, `@DecimalMin` on the request DTOs; `MethodArgumentNotValidException` → `400` in `GlobalExceptionHandler`), **not** in the services. Amounts must be positive and non-null, currencies within the allowed set, etc. Keeps services free of input-shape checks and rejects malformed requests before any business logic runs. |
 | Money-operation UI | The credit / debit / exchange forms on the Account Overview page go beyond the assignment's read-only pages; kept for demo convenience — revisit whether to retain for the final submission. |
-| Custom chart date ranges | Filter the balance line chart by a selectable time range. |
+| Custom chart date ranges | Filter the balance line chart by a selectable time range. Pairs with the balance-series item below so the window function runs over a bounded input. |
+| Bounded balance-series query | `getBalanceSeries` recomputes the running balance over **all** of an account's transactions on every chart load (no bound, no filter). Add a date/row window so the query stays cheap as history grows. |
 | Production database | Swap H2 for a production SQL database (e.g. PostgreSQL) via a profile. |
-| Concurrency safety | Optimistic locking (`@Version`) on balance updates to guard concurrent debits. |
 | Authentication | Replace the `X-Username` header with an auth token (URLs stay the same). |
+| Index `account.customer_id` | The account-by-customer lookup joins on this FK, but H2 does not auto-index FK columns. The transaction-history indexes (`(account_code, created_at)`, `transaction_id`) and the `username` / `account_code` unique indexes already exist — this FK is the remaining gap. |
+| Cursor-only history paging | Because `transaction_id` is a TSID (time-sorted id), a history page can be fetched with `transaction_id` + `limit` alone, dropping `created_at` from the cursor, `WHERE`, and `ORDER BY`; the supporting index then simplifies to `(account_code, transaction_id)`. |
+| Unit-test the money core | Add direct tests for the riskiest units — `ExchangeServiceDefault` (four-leg construction) and the balance math in `LedgerHandlerServiceDefault` — plus a parallel-debit test that exercises the concurrency guard above. |
+
+### Frontend
+
+| Item | Notes |
+|------|-------|
+| Input validation & submit guarding | The credit / debit / exchange amount fields are plain text inputs guarded only by a truthiness check, and the action effects use `mergeMap`, so malformed values (`"abc"`) or a double-click fire bad/duplicate requests. Add a positive-number check, `inputmode="decimal"`, disable the submit button while an action is in flight (or `exhaustMap` to drop duplicate submits). Complements the controller-layer validation above — the backend stays authoritative. |
+| Time-scale chart axis | `BalanceChart` maps each point to a `toLocaleString()` string label, so points are evenly spaced regardless of the real time gaps. Use a Chart.js **time scale** (`type: 'time'` + a date adapter) so transactions sit at their true temporal position, as the requirement ("time on the horizontal axis") intends. |
+| Money formatting on display | Balances render raw (`1234.5 EUR`). Use `Intl.NumberFormat` / Angular's `currency` pipe for locale-aware output (`€1,234.50`). |

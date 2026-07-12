@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 public class PdfServiceDefault implements PdfService {
 
     private final TransactionService transactionService;
-    private final PdrRender renderer;
+    private final PdfRender   renderer;
 
-    public PdfServiceDefault(TransactionService getTransaction, PdrRender renderer) {
+    public PdfServiceDefault(TransactionService getTransaction, PdfRender   renderer) {
         this.transactionService = getTransaction;
         this.renderer = renderer;
     }

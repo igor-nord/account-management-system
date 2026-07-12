@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-public class PdrRender {
+public class PdfRender   {
 
     public byte[] render(String transactionId, LocalDateTime createdAt, List<AccountTransaction> legs) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
